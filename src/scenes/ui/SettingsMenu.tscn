@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://c6r6r7r6r6r6r"]
+
+[ext_resource type="Script" uid="uid://bkkuuec0mhj3s" path="res://src/scripts/ui/settings_menu.gd" id="1_script"]
+
+[node name="SettingsMenu" type="CanvasLayer" unique_id=18839381]
+layer = 101
+script = ExtResource("1_script")
+
+[node name="Control" type="Control" parent="." unique_id=1636509746]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="Control" unique_id=1337775706]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.1, 0.9)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control" unique_id=1607472704]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="MainVBox" type="VBoxContainer" parent="Control/MarginContainer" unique_id=80231459]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="HBoxContainer" parent="Control/MarginContainer/MainVBox" unique_id=714131583]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Control/MarginContainer/MainVBox/Header" unique_id=88986578]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "SETTINGS"
+
+[node name="Spacer" type="Control" parent="Control/MarginContainer/MainVBox/Header" unique_id=1995279904]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="Control/MarginContainer/MainVBox/Header" unique_id=1467169197]
+unique_name_in_owner = true
+layout_mode = 2
+text = " BACK "
+
+[node name="Tabs" type="HBoxContainer" parent="Control/MarginContainer/MainVBox" unique_id=744827315]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/MarginContainer/MainVBox" unique_id=830527466]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ContentVBox" type="VBoxContainer" parent="Control/MarginContainer/MainVBox/ScrollContainer" unique_id=1874786470]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 15
+
+[node name="Footer" type="HBoxContainer" parent="Control/MarginContainer/MainVBox" unique_id=415873460]
+layout_mode = 2
+alignment = 2
+
+[node name="ApplyButton" type="Button" parent="Control/MarginContainer/MainVBox/Footer" unique_id=1024424356]
+unique_name_in_owner = true
+layout_mode = 2
+text = " APPLY VIDEO "

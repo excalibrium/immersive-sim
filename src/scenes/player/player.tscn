@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://8tspogp1qjea"]
+
+[ext_resource type="Script" uid="uid://b1hc4kl6l2jm5" path="res://src/scenes/player/player.gd" id="1_swhsd"]
+[ext_resource type="Script" uid="uid://3xnkdkqmefvu" path="res://src/scripts/player/player_interactor.gd" id="2_interactor"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_yx56f"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_swhsd"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qopur"]
+
+[node name="Player" type="CharacterBody3D" unique_id=1371803597 node_paths=PackedStringArray("camera_3d") groups=["player"]]
+script = ExtResource("1_swhsd")
+camera_3d = NodePath("Camera3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=942305582]
+mesh = SubResource("CapsuleMesh_yx56f")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=405247634]
+shape = SubResource("CapsuleShape3D_swhsd")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=148639062]
+
+[node name="RayCast3D" type="RayCast3D" parent="Camera3D" unique_id=1269249028]
+target_position = Vector3(0, 0, -3)
+
+[node name="PlayerInteractor" type="Node3D" parent="." unique_id=661214063 node_paths=PackedStringArray("raycast", "proximity_area")]
+script = ExtResource("2_interactor")
+raycast = NodePath("../Camera3D/RayCast3D")
+proximity_area = NodePath("../ProximityArea")
+
+[node name="ProximityArea" type="Area3D" parent="." unique_id=353082543]
+collision_layer = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ProximityArea" unique_id=2115356404]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+shape = SubResource("BoxShape3D_qopur")
