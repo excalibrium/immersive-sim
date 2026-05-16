@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="ObjectiveData" format=3 uid="uid://toxtgmtj5lns"]
+
+[ext_resource type="Script" uid="uid://ypumdlcy4ikd" path="res://src/resources/objective_data.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://c7pu5terglwli" path="res://src/resources/task_data.gd" id="2_m71bk"]
+[ext_resource type="Resource" path="res://src/resources/tasks/find_keycard.tres" id="2_task"]
+[ext_resource type="Resource" path="res://src/resources/tasks/open_door.tres" id="3_task"]
+
+[resource]
+script = ExtResource("1_script")
+objective_id = "LEVEL_01_MAIN"
+title_key = "OBJECTIVE_INFILTRATE_BASE"
+tasks = Array[ExtResource("2_m71bk")]([ExtResource("2_task"), ExtResource("3_task")])

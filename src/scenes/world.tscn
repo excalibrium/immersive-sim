@@ -1,17 +1,26 @@
-[gd_scene load_steps=17 format=3 uid="uid://c6v2d1n4p1x3e"]
+[gd_scene format=3 uid="uid://c6v2d1n4p1x3e"]
 
-[ext_resource type="Script" path="res://src/scripts/world.gd" id="1_world"]
+[ext_resource type="Script" uid="uid://dpykreowgsmtk" path="res://src/scripts/world.gd" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://8tspogp1qjea" path="res://src/scenes/player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" path="res://src/scenes/ui/ObjectiveList.tscn" id="3_ui"]
 [ext_resource type="PackedScene" path="res://src/scenes/ui/Crosshair.tscn" id="4_crosshair"]
-[ext_resource type="Script" path="res://src/scripts/global/inventory_manager.gd" id="5_inv_man"]
-[ext_resource type="Script" path="res://src/scripts/global/objective_manager.gd" id="6_obj_man"]
-[ext_resource type="Script" path="res://src/scripts/components/interactable.gd" id="7_interactable"]
-[ext_resource type="Script" path="res://src/scripts/components/door.gd" id="8_door"]
-[ext_resource type="Script" path="res://src/scripts/components/collectible.gd" id="9_collectible"]
+[ext_resource type="Script" uid="uid://b3etkg7wvwr1" path="res://src/scripts/global/inventory_manager.gd" id="5_inv_man"]
+[ext_resource type="Script" uid="uid://ypumdlcy4ikd" path="res://src/resources/objective_data.gd" id="5_vqtul"]
+[ext_resource type="Script" uid="uid://b1xsumikbqobr" path="res://src/scripts/global/objective_manager.gd" id="6_obj_man"]
+[ext_resource type="Script" uid="uid://crgd3640b2fns" path="res://src/scripts/components/interactable.gd" id="7_interactable"]
+[ext_resource type="Resource" uid="uid://bivqvkr6rv488" path="res://src/resources/objectives/get_inside.tres" id="7_qi7wn"]
+[ext_resource type="Script" uid="uid://e543gc5035b" path="res://src/scripts/components/door.gd" id="8_door"]
+[ext_resource type="Script" uid="uid://cmkwx814kw7h" path="res://src/scripts/components/collectible.gd" id="9_collectible"]
 [ext_resource type="Resource" path="res://src/resources/items/security_keycard.tres" id="10_keycard_res"]
-[ext_resource type="Script" uid="uid://cqmaukud6kdxl" path="res://src/scripts/components/task_completer_door.gd" id="11_tc_door"]
-[ext_resource type="Script" uid="uid://dxfta0g43bmi8" path="res://src/scripts/components/task_completer_collectible.gd" id="12_tc_coll"]
+[ext_resource type="Script" uid="uid://c0k8q8syoqgtn" path="res://src/scripts/components/button_activator.gd" id="13_btn_act"]
+[ext_resource type="Script" uid="uid://bq1dbrs2xrhti" path="res://src/scripts/components/sliding_door.gd" id="14_slide_door"]
+[ext_resource type="Script" uid="uid://dcfkwf62474a1" path="res://src/scripts/components/objective_giver.gd" id="15_obj_giver"]
+[ext_resource type="Resource" uid="uid://toxtgmtj5lns" path="res://src/resources/objectives/infiltrate_base.tres" id="16_level_obj"]
+[ext_resource type="Script" uid="uid://c7pihr4rx1yu8" path="res://src/scripts/components/objective_giver_glue.gd" id="17_obj_glue"]
+[ext_resource type="Script" uid="uid://1v4ulpnj7uk2" path="res://src/scripts/components/signal_task_completer.gd" id="18_25l4m"]
+[ext_resource type="Resource" path="res://src/resources/tasks/find_keycard.tres" id="19_qi7wn"]
+[ext_resource type="Resource" path="res://src/resources/tasks/open_door.tres" id="20_k5joq"]
+[ext_resource type="Resource" uid="uid://cnpr3vsu6tn4o" path="res://src/resources/tasks/open_button_door.tres" id="21_k5joq"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -44,84 +53,168 @@ size = Vector3(0.2, 0.05, 0.3)
 [sub_resource type="BoxShape3D" id="BoxShape3D_keycard"]
 size = Vector3(0.2, 0.05, 0.3)
 
-[node name="World" type="Node3D"]
+[sub_resource type="BoxMesh" id="BoxMesh_button"]
+size = Vector3(0.2, 0.2, 0.1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_button"]
+size = Vector3(0.2, 0.2, 0.1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sliding_door"]
+size = Vector3(2, 2.5, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sliding_door"]
+size = Vector3(2, 2.5, 0.2)
+
+[node name="World" type="Node3D" unique_id=1866465083]
 script = ExtResource("1_world")
 
-[node name="InventoryManager" type="Node" parent="."]
+[node name="InventoryManager" type="Node" parent="." unique_id=352356859]
 script = ExtResource("5_inv_man")
 
-[node name="ObjectiveManager" type="Node" parent="."]
+[node name="ObjectiveManager" type="Node" parent="." unique_id=1806411879]
 script = ExtResource("6_obj_man")
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="ObjectiveGiver" type="Node" parent="." unique_id=541912493]
+script = ExtResource("15_obj_giver")
+objectives = Array[ExtResource("5_vqtul")]([ExtResource("16_level_obj"), ExtResource("7_qi7wn")])
+delivery_mode = 1
+give_on_ready = true
 
-[node name="ObjectiveList" parent="UI" instance=ExtResource("3_ui")]
+[node name="ObjectiveGiverGlue" type="Node" parent="ObjectiveGiver" unique_id=406787750 node_paths=PackedStringArray("objective_giver")]
+script = ExtResource("17_obj_glue")
+objective_giver = NodePath("..")
 
-[node name="Crosshair" parent="UI" instance=ExtResource("4_crosshair")]
+[node name="UI" type="CanvasLayer" parent="." unique_id=1296083280]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="ObjectiveList" parent="UI" unique_id=452595205 instance=ExtResource("3_ui")]
+
+[node name="Crosshair" parent="UI" unique_id=292443138 instance=ExtResource("4_crosshair")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1166825286]
 environment = SubResource("Environment_world")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=770006648]
 transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
 shadow_enabled = true
 
-[node name="Floor" type="StaticBody3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="." unique_id=1127331105]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=1055437950]
 mesh = SubResource("PlaneMesh_floor")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=2062540075]
 shape = SubResource("ConcavePolygonShape3D_floor")
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
+[node name="Player" parent="." unique_id=646753948 instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="SecurityDoor" type="Node3D" parent="."]
+[node name="SecurityDoor" type="Node3D" parent="." unique_id=1842631852]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -5)
 
-[node name="DoorLeaf" type="StaticBody3D" parent="SecurityDoor"]
+[node name="DoorLeaf" type="StaticBody3D" parent="SecurityDoor" unique_id=509710607]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SecurityDoor/DoorLeaf"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SecurityDoor/DoorLeaf" unique_id=1041584095]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
 mesh = SubResource("BoxMesh_door")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SecurityDoor/DoorLeaf"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SecurityDoor/DoorLeaf" unique_id=225022444]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
 shape = SubResource("BoxShape3D_door")
 
-[node name="Interactable" type="Node3D" parent="SecurityDoor/DoorLeaf"]
+[node name="Interactable" type="Node3D" parent="SecurityDoor/DoorLeaf" unique_id=668480575]
 script = ExtResource("7_interactable")
 
-[node name="Door" type="Node3D" parent="SecurityDoor/DoorLeaf" node_paths=PackedStringArray("interactable")]
+[node name="Door" type="Node" parent="SecurityDoor/DoorLeaf" unique_id=1098750404 node_paths=PackedStringArray("interactable")]
 script = ExtResource("8_door")
 interactable = NodePath("../Interactable")
 is_locked = true
 required_item_id = "security_keycard"
 
-[node name="TaskCompleterDoor" type="Node" parent="SecurityDoor/DoorLeaf" node_paths=PackedStringArray("door")]
-script = ExtResource("11_tc_door")
-door = NodePath("../Door")
-task_id = "OPEN_SECURITY_DOOR"
+[node name="SecurityDoor2" type="Node3D" parent="." unique_id=1545360390]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4, 0, -5)
 
-[node name="Keycard" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.1, -3)
+[node name="DoorLeaf" type="StaticBody3D" parent="SecurityDoor2" unique_id=1246867160]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Keycard"]
-mesh = SubResource("BoxMesh_keycard")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SecurityDoor2/DoorLeaf" unique_id=922448956]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
+mesh = SubResource("BoxMesh_door")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Keycard"]
-shape = SubResource("BoxShape3D_keycard")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SecurityDoor2/DoorLeaf" unique_id=908577064]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1, 0)
+shape = SubResource("BoxShape3D_door")
 
-[node name="Interactable" type="Node3D" parent="Keycard"]
+[node name="Interactable" type="Node3D" parent="SecurityDoor2/DoorLeaf" unique_id=2122720556]
 script = ExtResource("7_interactable")
 
-[node name="Collectible" type="Node" parent="Keycard" node_paths=PackedStringArray("interactable")]
+[node name="Door" type="Node" parent="SecurityDoor2/DoorLeaf" unique_id=120484112 node_paths=PackedStringArray("interactable")]
+script = ExtResource("8_door")
+open_rotation = -90.0
+interactable = NodePath("../Interactable")
+is_locked = true
+required_item_id = "security_keycard"
+
+[node name="Keycard" type="StaticBody3D" parent="." unique_id=929427340]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.1, -3)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Keycard" unique_id=1265522454]
+mesh = SubResource("BoxMesh_keycard")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Keycard" unique_id=1168578877]
+shape = SubResource("BoxShape3D_keycard")
+
+[node name="Interactable" type="Node3D" parent="Keycard" unique_id=805085155]
+script = ExtResource("7_interactable")
+
+[node name="Collectible" type="Node" parent="Keycard" unique_id=1645843006 node_paths=PackedStringArray("interactable")]
 script = ExtResource("9_collectible")
 item_data = ExtResource("10_keycard_res")
 interactable = NodePath("../Interactable")
 
-[node name="TaskCompleterCollectible" type="Node" parent="Keycard" node_paths=PackedStringArray("collectible")]
-script = ExtResource("12_tc_coll")
-collectible = NodePath("../Collectible")
-task_id = "security_keycard"
+[node name="seg2" type="Node3D" parent="." unique_id=726291210]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -5)
+
+[node name="WallButton" type="StaticBody3D" parent="seg2" unique_id=957452829]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="seg2/WallButton" unique_id=2091817430]
+mesh = SubResource("BoxMesh_button")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="seg2/WallButton" unique_id=1100358703]
+shape = SubResource("BoxShape3D_button")
+
+[node name="Interactable" type="Node3D" parent="seg2/WallButton" unique_id=756007325]
+script = ExtResource("7_interactable")
+
+[node name="ButtonActivator" type="Node" parent="seg2/WallButton" unique_id=637645967 node_paths=PackedStringArray("interactable")]
+script = ExtResource("13_btn_act")
+interactable = NodePath("../Interactable")
+
+[node name="SlidingDoor" type="Node3D" parent="seg2" unique_id=309253375]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+
+[node name="DoorLeaf" type="StaticBody3D" parent="seg2/SlidingDoor" unique_id=738926653]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="seg2/SlidingDoor/DoorLeaf" unique_id=1653540897]
+mesh = SubResource("BoxMesh_sliding_door")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="seg2/SlidingDoor/DoorLeaf" unique_id=823573234]
+shape = SubResource("BoxShape3D_sliding_door")
+
+[node name="SlidingDoorComp" type="Node" parent="seg2/SlidingDoor/DoorLeaf" unique_id=1317034795]
+script = ExtResource("14_slide_door")
+
+[node name="KeycardCompleter" type="Node" parent="." unique_id=810225334 node_paths=PackedStringArray("target_node")]
+script = ExtResource("18_25l4m")
+target_node = NodePath("../Keycard/Collectible")
+signal_type = 1
+task_data = ExtResource("19_qi7wn")
+
+[node name="SecDoorCompleter" type="Node" parent="." unique_id=1994679509 node_paths=PackedStringArray("target_node")]
+script = ExtResource("18_25l4m")
+target_node = NodePath("../SecurityDoor/DoorLeaf/Door")
+task_data = ExtResource("20_k5joq")
+
+[node name="SecDoorCompleter2" type="Node" parent="." unique_id=727467644 node_paths=PackedStringArray("target_node")]
+script = ExtResource("18_25l4m")
+target_node = NodePath("../seg2/SlidingDoor/DoorLeaf/SlidingDoorComp")
+task_data = ExtResource("21_k5joq")

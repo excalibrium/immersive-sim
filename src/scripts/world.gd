@@ -7,41 +7,23 @@ extends Node3D
 @onready var player = $Player
 @onready var keycard = $Keycard
 @onready var keycard_collectible = $Keycard/Collectible
+@onready var button_activator = $seg2/WallButton/ButtonActivator
+@onready var sliding_door_comp = $seg2/SlidingDoor/DoorLeaf/SlidingDoorComp
+
+func _enter_tree():
+	# 0. Initialize Game Session early so children can access it in _ready
+	# Use .duplicate(true) to ensure each playthrough has its own mutable state
+	Game.session = GameSession.new().duplicate(true)
 
 func _ready():
-	# 0. Initialize Game Session
-	Game.session = GameSession.new()
-	
 	var interactor = player.find_child("PlayerInteractor")
 	if interactor:
 		crosshair.setup(interactor)
 		
 	if keycard_collectible:
 		keycard_collectible.collected.connect(keycard.queue_free)
-	
-	# Small delay to ensure Managers have registered themselves to Game bridge
-	await get_tree().process_frame
-	
-	_initialize_level()
+		
+	if button_activator and sliding_door_comp:
+		button_activator.target_nodes.assign([sliding_door_comp])
 
-func _initialize_level():
-	# 1. Setup Level-Specific Task Pool
-	var task1 = TaskData.new()
-	task1.task_id = "security_keycard"
-	task1.description_key = "TASK_FIND_KEYCARD"
-	
-	var task2 = TaskData.new()
-	task2.task_id = "OPEN_SECURITY_DOOR"
-	task2.description_key = "TASK_OPEN_SECURITY_DOOR"
-	
-	Game.session.global_task_pool.assign([task1, task2])
-	
-	# 2. Setup Level Objectives
-	var main_obj = ObjectiveData.new()
-	main_obj.objective_id = "LEVEL_01_MAIN"
-	main_obj.title_key = "OBJECTIVE_INFILTRATE_BASE"
-	main_obj.tasks.assign([task1.duplicate_task(), task2.duplicate_task()])
-	
-	# 3. Give initial objective
-	if Game.objectives:
-		Game.objectives.add_objective(main_obj)
+	# Note: ObjectiveGiver component handles the initial objective now.

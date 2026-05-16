@@ -7,6 +7,7 @@ class_name ObjectiveManager
 signal objective_added(objective: ObjectiveData)
 signal objective_completed(objective: ObjectiveData)
 signal task_updated(objective: ObjectiveData, task: TaskData)
+signal objectives_updated(active: Array[ObjectiveData])
 
 func _ready():
 	Game.objectives = self
@@ -48,13 +49,17 @@ func _add_objective(objective: ObjectiveData):
 	assert(Game.session != null, "Attempted to access Objectives without an active Game Session.")
 	Game.session.active_objectives.append(objective)
 	objective_added.emit(objective)
+	objectives_updated.emit(Game.session.active_objectives)
 	print("OBJECTIVE_ADDED: ", objective.title_key)
 
 ## Updates a task's status by its task_id.
 func update_task(task_id: String, completed: bool):
 	assert(Game.session != null, "Attempted to access Objectives without an active Game Session.")
 	
-	for objective in Game.session.active_objectives:
+	var session = Game.session
+	var objective_to_move: ObjectiveData = null
+	
+	for objective in session.active_objectives:
 		for task in objective.tasks:
 			if task.task_id == task_id:
 				task.is_completed = completed
@@ -62,10 +67,27 @@ func update_task(task_id: String, completed: bool):
 				print("TASK_UPDATED: ", task_id, " | STATUS: ", completed)
 				
 				if objective.is_objective_completed():
-					objective_completed.emit(objective)
-					print("OBJECTIVE_COMPLETED: ", objective.title_key)
-				return
-	push_warning("TASK_ID_NOT_FOUND: " + task_id)
+					objective_to_move = objective
+				break
+		if objective_to_move:
+			break
+	
+	if objective_to_move:
+		if not objective_to_move.is_repeatable:
+			session.active_objectives.erase(objective_to_move)
+			session.completed_objectives.append(objective_to_move)
+		
+		objective_completed.emit(objective_to_move)
+		objectives_updated.emit(session.active_objectives)
+		print("OBJECTIVE_COMPLETED: ", objective_to_move.title_key)
+	elif not objective_to_move: # If we found the task but didn't complete objective, still emit update for UI checkboxes
+		# Check if we actually found the task (this is a bit messy with the loop above)
+		# Let's just always emit update if we are here and found something
+		objectives_updated.emit(session.active_objectives)
+		return
+
+	if not objective_to_move:
+		push_warning("TASK_ID_NOT_FOUND: " + task_id)
 
 func get_active_objectives() -> Array[ObjectiveData]:
 	if Game.session:

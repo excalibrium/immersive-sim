@@ -5,11 +5,11 @@ extends PanelContainer
 
 var objective_data: ObjectiveData
 
-func setup(data: ObjectiveData):
+func setup(data: ObjectiveData, is_priority: bool = true):
 	objective_data = data
-	refresh_ui()
+	refresh_ui(is_priority)
 
-func refresh_ui():
+func refresh_ui(is_priority: bool = true):
 	if not objective_data:
 		return
 	
@@ -18,6 +18,10 @@ func refresh_ui():
 	# Clear tasks
 	for child in task_container.get_children():
 		child.queue_free()
+	
+	task_container.visible = is_priority
+	if not is_priority:
+		return
 	
 	# Add tasks
 	for task in objective_data.tasks:

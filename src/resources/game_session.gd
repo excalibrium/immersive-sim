@@ -6,6 +6,7 @@ class_name GameSession
 
 @export var items: Array[ItemResource] = []
 @export var active_objectives: Array[ObjectiveData] = []
+@export var completed_objectives: Array[ObjectiveData] = []
 
 @export var premade_pool: Array[ObjectiveData] = []
 @export var global_task_pool: Array[TaskData] = []

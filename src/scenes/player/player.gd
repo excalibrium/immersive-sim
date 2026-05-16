@@ -83,13 +83,16 @@ func _physics_process(delta: float) -> void:
 
 	# Apply time scale to target speed
 	var final_speed = target_speed * TimeManager.time_scale
+	
+	# Determine acceleration (low air control vs high ground control)
+	var accel = 100.0 if is_on_floor() else 5.0
 
 	if direction:
-		velocity.x = direction.x * final_speed
-		velocity.z = direction.z * final_speed
+		velocity.x = move_toward(velocity.x, direction.x * final_speed, accel * scaled_delta)
+		velocity.z = move_toward(velocity.z, direction.z * final_speed, accel * scaled_delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0, final_speed)
-		velocity.z = move_toward(velocity.z, 0, final_speed)
+		velocity.x = move_toward(velocity.x, 0, accel * scaled_delta)
+		velocity.z = move_toward(velocity.z, 0, accel * scaled_delta)
 
 	_handle_states(delta)
 	

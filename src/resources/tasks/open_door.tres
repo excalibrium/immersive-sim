@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TaskData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/resources/task_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+task_id = "OPEN_SECURITY_DOOR"
+description_key = "TASK_OPEN_SECURITY_DOOR"
+is_completed = false

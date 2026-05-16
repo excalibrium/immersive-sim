@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TaskData" format=3 uid="uid://cnpr3vsu6tn4o"]
+
+[ext_resource type="Script" uid="uid://c7pu5terglwli" path="res://src/resources/task_data.gd" id="1_m1f87"]
+
+[resource]
+script = ExtResource("1_m1f87")
+task_id = "OPEN_SECOND_DOOR"
+description_key = "OPEN_DOOR"
+metadata/_custom_type_script = "uid://c7pu5terglwli"

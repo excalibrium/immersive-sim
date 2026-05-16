@@ -7,9 +7,7 @@ extends Control
 func _ready():
 	# Connect to ObjectiveManager signals
 	if Game.objectives:
-		Game.objectives.objective_added.connect(_on_objective_added)
-		Game.objectives.task_updated.connect(_on_task_updated)
-		Game.objectives.objective_completed.connect(_on_objective_completed)
+		Game.objectives.objectives_updated.connect(_on_objectives_updated)
 	
 	# Clear placeholder children
 	for child in objective_container.get_children():
@@ -17,31 +15,39 @@ func _ready():
 	
 	# Initial load
 	if Game.objectives:
-		for objective in Game.objectives.get_active_objectives():
-			_add_objective_item(objective)
+		_on_objectives_updated(Game.objectives.get_active_objectives())
 
-func _on_objective_added(objective: ObjectiveData):
-	_add_objective_item(objective)
+func _on_objectives_updated(active: Array[ObjectiveData]):
+	# Clear existing
+	for child in objective_container.get_children():
+		child.queue_free()
+	
+	for i in range(active.size()):
+		var objective = active[i]
+		_add_objective_item(objective, i)
 
-func _on_task_updated(objective: ObjectiveData, _task: TaskData):
-	_refresh_objective_item(objective)
-
-func _on_objective_completed(objective: ObjectiveData):
-	_refresh_objective_item(objective)
-
-func _add_objective_item(objective: ObjectiveData):
+func _add_objective_item(objective: ObjectiveData, index: int):
 	if not objective_item_scene:
 		push_error("OBJECTIVE_ITEM_SCENE_NOT_SET")
 		return
 		
 	var item = objective_item_scene.instantiate()
 	objective_container.add_child(item)
-	item.set_meta("objective_id", objective.objective_id)
-	item.setup(objective)
-
-func _refresh_objective_item(objective: ObjectiveData):
-	for child in objective_container.get_children():
-		if child.get_meta("objective_id") == objective.objective_id:
-			if child.has_method("refresh_ui"):
-				child.refresh_ui()
-			return
+	
+	# Visual Hierarchy Logic
+	var is_priority = (index == 0)
+	var scale_factor = 1.0
+	var alpha = 1.0
+	
+	if index == 1:
+		scale_factor = 0.85
+		alpha = 0.7
+	elif index >= 2:
+		scale_factor = 0.7
+		alpha = 0.4
+	
+	item.modulate.a = alpha
+	item.custom_minimum_size *= scale_factor # Simple scaling
+	item.scale = Vector2(scale_factor, scale_factor)
+	
+	item.setup(objective, is_priority)

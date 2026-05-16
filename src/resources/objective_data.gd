@@ -4,11 +4,13 @@ class_name ObjectiveData
 @export var objective_id: String = ""
 @export var title_key: String = ""
 @export var tasks: Array[TaskData] = []
+@export var is_repeatable: bool = false
 
 func duplicate_objective() -> ObjectiveData:
 	var new_objective = ObjectiveData.new()
 	new_objective.objective_id = objective_id
 	new_objective.title_key = title_key
+	new_objective.is_repeatable = is_repeatable
 	
 	var duplicated_tasks: Array[TaskData] = []
 	for task in tasks:
