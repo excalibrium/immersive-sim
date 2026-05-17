@@ -9,6 +9,9 @@ signal collected
 @export var item_data: ItemResource
 @export var interactable: Interactable
 
+## The node to be freed when this item is collected (usually the visual representation).
+@export var visual_root: Node
+
 func _ready():
 	if not interactable:
 		interactable = get_parent() as Interactable
@@ -22,3 +25,6 @@ func _on_interacted(_interactor: Node):
 	if item_data and Game.inventory:
 		Game.inventory.add_item(item_data)
 		collected.emit()
+		
+		if visual_root:
+			visual_root.queue_free()

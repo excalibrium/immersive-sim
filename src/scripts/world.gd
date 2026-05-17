@@ -19,11 +19,3 @@ func _ready():
 	var interactor = player.find_child("PlayerInteractor")
 	if interactor:
 		crosshair.setup(interactor)
-		
-	if keycard_collectible:
-		keycard_collectible.collected.connect(keycard.queue_free)
-		
-	if button_activator and sliding_door_comp:
-		button_activator.target_nodes.assign([sliding_door_comp])
-
-	# Note: ObjectiveGiver component handles the initial objective now.

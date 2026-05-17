@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dpykreowgsmtk" path="res://src/scripts/world.gd" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://8tspogp1qjea" path="res://src/scenes/player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://src/scenes/ui/InventoryUI.tscn" id="3_inv_ui"]
 [ext_resource type="PackedScene" path="res://src/scenes/ui/ObjectiveList.tscn" id="3_ui"]
 [ext_resource type="PackedScene" path="res://src/scenes/ui/Crosshair.tscn" id="4_crosshair"]
 [ext_resource type="Script" uid="uid://b3etkg7wvwr1" path="res://src/scripts/global/inventory_manager.gd" id="5_inv_man"]
@@ -21,6 +22,7 @@
 [ext_resource type="Resource" path="res://src/resources/tasks/find_keycard.tres" id="19_qi7wn"]
 [ext_resource type="Resource" path="res://src/resources/tasks/open_door.tres" id="20_k5joq"]
 [ext_resource type="Resource" uid="uid://cnpr3vsu6tn4o" path="res://src/resources/tasks/open_button_door.tres" id="21_k5joq"]
+[ext_resource type="PackedScene" uid="uid://di6wmoup6abbu" path="res://src/scenes/level/modular_level_kit.tscn" id="23_k37mw"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_sky"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -88,6 +90,8 @@ objective_giver = NodePath("..")
 
 [node name="ObjectiveList" parent="UI" unique_id=452595205 instance=ExtResource("3_ui")]
 
+[node name="InventoryUI" parent="UI" unique_id=123456789 instance=ExtResource("3_inv_ui")]
+
 [node name="Crosshair" parent="UI" unique_id=292443138 instance=ExtResource("4_crosshair")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1166825286]
@@ -98,6 +102,7 @@ transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75
 shadow_enabled = true
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1127331105]
+visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Floor" unique_id=1055437950]
 mesh = SubResource("PlaneMesh_floor")
@@ -110,6 +115,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="SecurityDoor" type="Node3D" parent="." unique_id=1842631852]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -5)
+visible = false
 
 [node name="DoorLeaf" type="StaticBody3D" parent="SecurityDoor" unique_id=509710607]
 
@@ -130,8 +136,14 @@ interactable = NodePath("../Interactable")
 is_locked = true
 required_item_id = "security_keycard"
 
+[node name="SecDoorCompleter" type="Node" parent="SecurityDoor" unique_id=1994679509 node_paths=PackedStringArray("target_node")]
+script = ExtResource("18_25l4m")
+target_node = NodePath("../DoorLeaf/Door")
+task_data = ExtResource("20_k5joq")
+
 [node name="SecurityDoor2" type="Node3D" parent="." unique_id=1545360390]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4, 0, -5)
+visible = false
 
 [node name="DoorLeaf" type="StaticBody3D" parent="SecurityDoor2" unique_id=1246867160]
 
@@ -155,6 +167,7 @@ required_item_id = "security_keycard"
 
 [node name="Keycard" type="StaticBody3D" parent="." unique_id=929427340]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.1, -3)
+visible = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Keycard" unique_id=1265522454]
 mesh = SubResource("BoxMesh_keycard")
@@ -165,13 +178,46 @@ shape = SubResource("BoxShape3D_keycard")
 [node name="Interactable" type="Node3D" parent="Keycard" unique_id=805085155]
 script = ExtResource("7_interactable")
 
-[node name="Collectible" type="Node" parent="Keycard" unique_id=1645843006 node_paths=PackedStringArray("interactable")]
+[node name="Collectible" type="Node" parent="Keycard" unique_id=1645843006 node_paths=PackedStringArray("interactable", "visual_root")]
 script = ExtResource("9_collectible")
 item_data = ExtResource("10_keycard_res")
 interactable = NodePath("../Interactable")
+visual_root = NodePath("..")
+
+[node name="KeycardCompleter" type="Node" parent="Keycard" unique_id=810225334 node_paths=PackedStringArray("target_node")]
+script = ExtResource("18_25l4m")
+target_node = NodePath("../Collectible")
+signal_type = 1
+task_data = ExtResource("19_qi7wn")
+
+[node name="Keycard2" type="StaticBody3D" parent="." unique_id=150123405]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.559183, 0.1, -3)
+visible = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Keycard2" unique_id=398220912]
+mesh = SubResource("BoxMesh_keycard")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Keycard2" unique_id=465465963]
+shape = SubResource("BoxShape3D_keycard")
+
+[node name="Interactable" type="Node3D" parent="Keycard2" unique_id=2038846213]
+script = ExtResource("7_interactable")
+
+[node name="Collectible" type="Node" parent="Keycard2" unique_id=1216792134 node_paths=PackedStringArray("interactable", "visual_root")]
+script = ExtResource("9_collectible")
+item_data = ExtResource("10_keycard_res")
+interactable = NodePath("../Interactable")
+visual_root = NodePath("..")
+
+[node name="KeycardCompleter" type="Node" parent="Keycard2" unique_id=1043639861 node_paths=PackedStringArray("target_node")]
+script = ExtResource("18_25l4m")
+target_node = NodePath("../Collectible")
+signal_type = 1
+task_data = ExtResource("19_qi7wn")
 
 [node name="seg2" type="Node3D" parent="." unique_id=726291210]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0, -5)
+visible = false
 
 [node name="WallButton" type="StaticBody3D" parent="seg2" unique_id=957452829]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 1.2, 0)
@@ -185,9 +231,10 @@ shape = SubResource("BoxShape3D_button")
 [node name="Interactable" type="Node3D" parent="seg2/WallButton" unique_id=756007325]
 script = ExtResource("7_interactable")
 
-[node name="ButtonActivator" type="Node" parent="seg2/WallButton" unique_id=637645967 node_paths=PackedStringArray("interactable")]
+[node name="ButtonActivator" type="Node" parent="seg2/WallButton" unique_id=637645967 node_paths=PackedStringArray("interactable", "target_nodes")]
 script = ExtResource("13_btn_act")
 interactable = NodePath("../Interactable")
+target_nodes = [NodePath("../../SlidingDoor/DoorLeaf/SlidingDoorComp")]
 
 [node name="SlidingDoor" type="Node3D" parent="seg2" unique_id=309253375]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
@@ -203,18 +250,10 @@ shape = SubResource("BoxShape3D_sliding_door")
 [node name="SlidingDoorComp" type="Node" parent="seg2/SlidingDoor/DoorLeaf" unique_id=1317034795]
 script = ExtResource("14_slide_door")
 
-[node name="KeycardCompleter" type="Node" parent="." unique_id=810225334 node_paths=PackedStringArray("target_node")]
+[node name="SecDoorCompleter2" type="Node" parent="seg2/SlidingDoor/DoorLeaf" unique_id=727467644 node_paths=PackedStringArray("target_node")]
 script = ExtResource("18_25l4m")
-target_node = NodePath("../Keycard/Collectible")
-signal_type = 1
-task_data = ExtResource("19_qi7wn")
-
-[node name="SecDoorCompleter" type="Node" parent="." unique_id=1994679509 node_paths=PackedStringArray("target_node")]
-script = ExtResource("18_25l4m")
-target_node = NodePath("../SecurityDoor/DoorLeaf/Door")
-task_data = ExtResource("20_k5joq")
-
-[node name="SecDoorCompleter2" type="Node" parent="." unique_id=727467644 node_paths=PackedStringArray("target_node")]
-script = ExtResource("18_25l4m")
-target_node = NodePath("../seg2/SlidingDoor/DoorLeaf/SlidingDoorComp")
+target_node = NodePath("../SlidingDoorComp")
 task_data = ExtResource("21_k5joq")
+
+[node name="modular_level_kit" parent="." unique_id=1742521094 instance=ExtResource("23_k37mw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.064, -1.8, -8.426)
