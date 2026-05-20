@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://sgsgbwvy15dy"]
+
+[ext_resource type="Texture2D" uid="uid://c180j0fou0tqy" path="res://src/assets/models/level/modular_level_kit_T_Props.webp" id="1_nwy2x"]
+[ext_resource type="Texture2D" uid="uid://btgoif6sobwex" path="res://src/assets/models/level/modular_level_kit_T_Props_Metallic-T_Props_Roughness.webp" id="2_03at6"]
+[ext_resource type="Texture2D" uid="uid://ckbvekxnbohtb" path="res://src/assets/models/level/modular_level_kit_T_Props_Normal.webp" id="3_p2qxn"]
+
+[resource]
+resource_name = "MI_Props"
+cull_mode = 2
+albedo_texture = ExtResource("1_nwy2x")
+metallic = 1.0
+metallic_texture = ExtResource("2_03at6")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_03at6")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_p2qxn")

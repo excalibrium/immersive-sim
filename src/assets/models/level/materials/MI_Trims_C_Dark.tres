@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dxlcpay4imqr7"]
+
+[ext_resource type="Texture2D" uid="uid://6rut36t74iap" path="res://src/assets/models/level/modular_level_kit_T_Trims_C_Diff.webp" id="1_pc1kd"]
+[ext_resource type="Texture2D" uid="uid://dbwbcp2bjer3l" path="res://src/assets/models/level/modular_level_kit_T_Trims_C_N_normals.webp" id="2_pvxe7"]
+
+[resource]
+resource_name = "MI_Trims_C_Dark"
+cull_mode = 2
+albedo_texture = ExtResource("1_pc1kd")
+metallic = 1.0
+roughness = 0.5527864
+normal_enabled = true
+normal_texture = ExtResource("2_pvxe7")

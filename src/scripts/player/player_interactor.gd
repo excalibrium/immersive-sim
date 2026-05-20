@@ -22,7 +22,7 @@ func _physics_process(_delta: float):
 	var new_state = State.NONE
 	
 	if new_target:
-		new_state = State.DENIED if new_target.is_denied() else State.INTERACTABLE
+		new_state = State.DENIED if new_target.is_denied(get_parent()) else State.INTERACTABLE
 	
 	if new_target != current_target:
 		if current_target:

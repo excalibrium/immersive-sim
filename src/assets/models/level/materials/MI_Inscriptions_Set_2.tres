@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cdrjycytmib2w"]
+
+[ext_resource type="Texture2D" uid="uid://sf0iwr6f2boe" path="res://src/assets/models/level/modular_level_kit_T_Inscriptions_Mask_2.webp" id="1_riwak"]
+
+[resource]
+resource_name = "MI_Inscriptions_Set_2"
+transparency = 4
+cull_mode = 2
+albedo_color = Color(1, 0.85726696, 0.60089463, 1)
+albedo_texture = ExtResource("1_riwak")

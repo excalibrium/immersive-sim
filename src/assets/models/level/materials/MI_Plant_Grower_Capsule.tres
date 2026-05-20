@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bq8clhjofb08g"]
+
+[ext_resource type="Texture2D" uid="uid://da51v86akbiyn" path="res://src/assets/models/level/modular_level_kit_T_Plant_Grower_Capsule_D.webp" id="1_ow1u7"]
+[ext_resource type="Texture2D" uid="uid://ds5kd1e3xo2ii" path="res://src/assets/models/level/modular_level_kit_T_Plant_Grower_Capsule_Emissive.webp" id="2_8ltua"]
+[ext_resource type="Texture2D" uid="uid://dapah1jxin0aj" path="res://src/assets/models/level/modular_level_kit_T_Plant_Grower_Capsule_Metallic-T_Plant_Grower_Capsule_Roughnes.webp" id="3_dtevs"]
+[ext_resource type="Texture2D" uid="uid://dcy0me5ah8so8" path="res://src/assets/models/level/modular_level_kit_T_Plant_Grower_Capsule_Normal.webp" id="4_jcfri"]
+
+[resource]
+resource_name = "MI_Plant_Grower_Capsule"
+cull_mode = 2
+albedo_texture = ExtResource("1_ow1u7")
+metallic = 1.0
+metallic_texture = ExtResource("3_dtevs")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("3_dtevs")
+roughness_texture_channel = 1
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_operator = 1
+emission_texture = ExtResource("2_8ltua")
+normal_enabled = true
+normal_texture = ExtResource("4_jcfri")

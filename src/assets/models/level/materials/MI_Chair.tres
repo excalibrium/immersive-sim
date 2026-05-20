@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://qi6bxx5jex1b"]
+
+[ext_resource type="Texture2D" uid="uid://d22146rbtxad" path="res://src/assets/models/level/modular_level_kit_T_Chair_D.webp" id="1_5lfmb"]
+[ext_resource type="Texture2D" uid="uid://cjwn4ec6bxexq" path="res://src/assets/models/level/modular_level_kit_T_Chair_Metallic-T_Chair_Roughness.webp" id="2_rwujn"]
+[ext_resource type="Texture2D" uid="uid://5xtdn703ahjr" path="res://src/assets/models/level/modular_level_kit_T_Chair_Normal.webp" id="3_lpvbw"]
+
+[resource]
+resource_name = "MI_Chair"
+cull_mode = 2
+albedo_texture = ExtResource("1_5lfmb")
+metallic = 1.0
+metallic_texture = ExtResource("2_rwujn")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_rwujn")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_lpvbw")

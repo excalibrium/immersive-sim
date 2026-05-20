@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://j0hwmg6vx387"]
+
+[ext_resource type="Texture2D" uid="uid://c1t3d4q2yod1q" path="res://src/assets/models/level/modular_level_kit_T_Box_2_Sealed.webp" id="1_f8uj7"]
+[ext_resource type="Texture2D" uid="uid://bfvm4au8xprh2" path="res://src/assets/models/level/modular_level_kit_T_Box_2_Metallic-T_Box_2_Sealed_Roughness.webp" id="2_wahf6"]
+[ext_resource type="Texture2D" uid="uid://bk5krwrb50p8k" path="res://src/assets/models/level/modular_level_kit_T_Box_2_Sealed_Normal.webp" id="3_04ie7"]
+
+[resource]
+resource_name = "MI_Box_2_Sealed"
+cull_mode = 2
+albedo_texture = ExtResource("1_f8uj7")
+metallic = 1.0
+metallic_texture = ExtResource("2_wahf6")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_wahf6")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_04ie7")

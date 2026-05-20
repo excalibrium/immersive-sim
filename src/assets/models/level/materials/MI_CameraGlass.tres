@@ -1,0 +1,9 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://kt0lxnttyf7"]
+
+[resource]
+resource_name = "MI_CameraGlass"
+transparency = 4
+cull_mode = 2
+albedo_color = Color(0, 0, 0, 0.25)
+metallic = 1.0
+roughness = 0.5527864

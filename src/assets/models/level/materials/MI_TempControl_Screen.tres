@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://didld4a2yn18k"]
+
+[ext_resource type="Texture2D" uid="uid://6kcd1o7wdidu" path="res://src/assets/models/level/modular_level_kit_T_TempDisplay.webp" id="1_keq1o"]
+
+[resource]
+resource_name = "MI_TempControl_Screen"
+cull_mode = 2
+metallic = 1.0
+roughness = 0.5527864
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_operator = 1
+emission_texture = ExtResource("1_keq1o")

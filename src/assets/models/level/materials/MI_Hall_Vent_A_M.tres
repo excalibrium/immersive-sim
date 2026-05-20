@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://d1dqmak8dlsfa"]
+
+[ext_resource type="Texture2D" uid="uid://d0n735kly3wrs" path="res://src/assets/models/level/modular_level_kit_T_Hall_Vent_A_Diff.webp" id="1_5gxyi"]
+[ext_resource type="Texture2D" uid="uid://4jaeo1utkpks" path="res://src/assets/models/level/modular_level_kit_T_Hall_Vent_A_N_normals.webp" id="2_g8lg1"]
+
+[resource]
+resource_name = "MI_Hall_Vent_A_M"
+cull_mode = 2
+albedo_texture = ExtResource("1_5gxyi")
+metallic = 0.5954546
+roughness = 0.79824096
+normal_enabled = true
+normal_texture = ExtResource("2_g8lg1")

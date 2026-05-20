@@ -22,8 +22,8 @@ func _on_new_game_pressed() -> void:
 	print("Starting new game...")
 	
 	# Global logic reset
-	if has_node("/root/TimeManager"):
-		get_node("/root/TimeManager").time_scale = 1.0
+	TimeManager.time_scale = 1.0
+	WindowManager.reset_to_state(WindowManager.MouseState.CAPTURED)
 		
 	get_tree().change_scene_to_file(start_world_path)
 

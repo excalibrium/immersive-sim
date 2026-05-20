@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://celvuq0jjlpp7"]
+
+[ext_resource type="Texture2D" uid="uid://c5hvfh17wdre7" path="res://src/assets/models/level/modular_level_kit_T_TableLamp_Diff.webp" id="1_nc40n"]
+[ext_resource type="Texture2D" uid="uid://bl0ii0frnrfrv" path="res://src/assets/models/level/modular_level_kit_T_TableLamp_N_normals.webp" id="2_wbpn4"]
+
+[resource]
+resource_name = "MI_TableLamp"
+cull_mode = 2
+albedo_texture = ExtResource("1_nc40n")
+metallic = 1.0
+roughness = 0.5527864
+normal_enabled = true
+normal_texture = ExtResource("2_wbpn4")

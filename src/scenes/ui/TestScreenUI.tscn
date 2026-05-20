@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://c7v4idl4nr2jw"]
+
+[ext_resource type="Script" path="res://src/scripts/ui/test_screen_ui.gd" id="1_script"]
+
+[node name="TestScreenUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="Panel/CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "TERMINAL_ACCESS"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="Panel/CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+text = "EXECUTE_PURGE"
+
+[node name="StatusLabel" type="Label" parent="Panel/CenterContainer/VBoxContainer"]
+layout_mode = 2
+text = "STATUS: IDLE"
+horizontal_alignment = 1

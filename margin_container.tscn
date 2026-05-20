@@ -1,0 +1,161 @@
+[gd_scene format=3 uid="uid://ce1rfnqtxh0vr"]
+
+[ext_resource type="Theme" uid="uid://dgwaimspbcb1a" path="res://src/resources/theme/theme_blue_label.tres" id="1_bachm"]
+[ext_resource type="Texture2D" uid="uid://6kcd1o7wdidu" path="res://src/assets/models/level/modular_level_kit_T_TempDisplay.webp" id="2_hhuvf"]
+[ext_resource type="Texture2D" uid="uid://c7w217mksytpx" path="res://src/assets/ui/form.png" id="3_6jxja"]
+
+[node name="MarginContainer" type="MarginContainer" unique_id=331951608]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_bachm")
+
+[node name="Control" type="TextureRect" parent="." unique_id=1195217264]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_hhuvf")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Control" unique_id=853212688]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_6jxja")
+draw_center = false
+patch_margin_left = 4
+patch_margin_top = 4
+patch_margin_right = 4
+patch_margin_bottom = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="Control" unique_id=1147050493]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 32
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer" unique_id=1863578649]
+layout_mode = 2
+
+[node name="moisture_VBox" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer" unique_id=2142493502]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="top" type="MarginContainer" parent="Control/MarginContainer/HBoxContainer/moisture_VBox" unique_id=40612424]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_top = 200
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/top" unique_id=197740531]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/top/HBoxContainer" unique_id=896292146]
+layout_mode = 2
+
+[node name="MOISTURE" type="Label" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/top/HBoxContainer/VBoxContainer" unique_id=217016387]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "MOISTURE"
+
+[node name="MOISTURE_PERCENTAGE" type="Label" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/top/HBoxContainer/VBoxContainer" unique_id=1922448706]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "%50"
+
+[node name="bottom" type="MarginContainer" parent="Control/MarginContainer/HBoxContainer/moisture_VBox" unique_id=2047056407]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_top = 70
+theme_override_constants/margin_right = 32
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/bottom" unique_id=1663341622]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/bottom/HBoxContainer" unique_id=1772405931]
+layout_mode = 2
+
+[node name="MOISTURE" type="Label" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/bottom/HBoxContainer/VBoxContainer" unique_id=533695665]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "MOISTURE"
+
+[node name="MOISTURE_PERCENTAGE" type="Label" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/bottom/HBoxContainer/VBoxContainer" unique_id=57781955]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "50%"
+
+[node name="moisture" type="Button" parent="Control/MarginContainer/HBoxContainer/moisture_VBox/bottom" unique_id=667282998]
+show_behind_parent = true
+layout_mode = 2
+
+[node name="heat_VBox" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer" unique_id=1722485383]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/MarginContainer/HBoxContainer/heat_VBox" unique_id=1288770510]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_top = 120
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/heat_VBox/MarginContainer" unique_id=1770599370]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/heat_VBox/MarginContainer/HBoxContainer" unique_id=345239595]
+layout_mode = 2
+
+[node name="HEAT" type="Label" parent="Control/MarginContainer/HBoxContainer/heat_VBox/MarginContainer/HBoxContainer/VBoxContainer" unique_id=28996366]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "HEAT"
+
+[node name="HEAT_DEGREE" type="Label" parent="Control/MarginContainer/HBoxContainer/heat_VBox/MarginContainer/HBoxContainer/VBoxContainer" unique_id=1499740801]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "30°C"
+
+[node name="bottom" type="MarginContainer" parent="Control/MarginContainer/HBoxContainer/heat_VBox" unique_id=319270174]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 150
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer/HBoxContainer/heat_VBox/bottom" unique_id=891444050]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/HBoxContainer/heat_VBox/bottom/HBoxContainer" unique_id=1587032858]
+layout_mode = 2
+
+[node name="HEAT" type="Label" parent="Control/MarginContainer/HBoxContainer/heat_VBox/bottom/HBoxContainer/VBoxContainer" unique_id=759026021]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "HEAT"
+
+[node name="HEAT_DEGREE" type="Label" parent="Control/MarginContainer/HBoxContainer/heat_VBox/bottom/HBoxContainer/VBoxContainer" unique_id=115298796]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "30°C"
+
+[node name="moisture" type="Button" parent="Control/MarginContainer/HBoxContainer/heat_VBox/bottom" unique_id=1115499040]
+show_behind_parent = true
+layout_mode = 2

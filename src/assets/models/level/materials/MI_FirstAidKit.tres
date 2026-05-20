@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://fjb232amv14o"]
+
+[ext_resource type="Texture2D" uid="uid://bxmk87ski3bjh" path="res://src/assets/models/level/modular_level_kit_T_FirstAidKit_Diff.webp" id="1_lew36"]
+[ext_resource type="Texture2D" uid="uid://bxaujy31543xj" path="res://src/assets/models/level/modular_level_kit_T_FirstAidKit_N_normals.webp" id="2_hoher"]
+
+[resource]
+resource_name = "MI_FirstAidKit"
+cull_mode = 2
+albedo_texture = ExtResource("1_lew36")
+normal_enabled = true
+normal_texture = ExtResource("2_hoher")

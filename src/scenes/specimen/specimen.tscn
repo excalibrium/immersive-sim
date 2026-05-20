@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://c6l6q8n6y3q3"]
+
+[ext_resource type="Script" uid="uid://busqejgekljnh" path="res://src/scripts/specimen/specimen.gd" id="1_spec"]
+[ext_resource type="Script" uid="uid://cjcbme6ccsdta" path="res://src/scripts/specimen/specimen_controller.gd" id="2_ctrl"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_oo3kc"]
+
+[node name="Specimen" type="CharacterBody3D" unique_id=4071048]
+script = ExtResource("1_spec")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1444024556]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="Visuals" type="Node3D" parent="." unique_id=1191009900]
+
+[node name="SpecimenController" type="Node" parent="." unique_id=1033440067]
+script = ExtResource("2_ctrl")
+
+[node name="BehavioralTells" type="Node" parent="." unique_id=1776062308]
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=52954053]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2077145440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("SphereMesh_oo3kc")

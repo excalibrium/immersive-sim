@@ -37,6 +37,244 @@ import_script/path=""
 materials/extract=0
 materials/extract_format=0
 materials/extract_path=""
-_subresources={}
+_subresources={
+"materials": {
+"MI_Base_Dark": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Base_Dark.tres",
+"use_external/path": "uid://bak3iu04285jk"
+},
+"MI_Base_Light": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Base_Light.tres",
+"use_external/path": "uid://d3juvi6f2pumk"
+},
+"MI_Black_Glass": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Black_Glass.tres",
+"use_external/path": "uid://th1v88ef1yir"
+},
+"MI_Box_1_Sealed": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Box_1_Sealed.tres",
+"use_external/path": "uid://rsg4gqbex7jv"
+},
+"MI_Box_2_Sealed": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Box_2_Sealed.tres",
+"use_external/path": "uid://j0hwmg6vx387"
+},
+"MI_CameraGlass": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_CameraGlass.tres",
+"use_external/path": "uid://kt0lxnttyf7"
+},
+"MI_CameraLens": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_CameraLens.tres",
+"use_external/path": "uid://cwbext2muir5c"
+},
+"MI_Chair": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Chair.tres",
+"use_external/path": "uid://qi6bxx5jex1b"
+},
+"MI_Desk_A": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Desk_A.tres",
+"use_external/path": "uid://2tx2vg05ickq"
+},
+"MI_FirstAidKit": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_FirstAidKit.tres",
+"use_external/path": "uid://fjb232amv14o"
+},
+"MI_Green_Glass": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Green_Glass.tres",
+"use_external/path": "uid://u0la203slua"
+},
+"MI_Hall_Floor_Main_M": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Hall_Floor_Main_M.tres",
+"use_external/path": "uid://wiydppgl1f3k"
+},
+"MI_Hall_Floor_Sec_C_M": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Hall_Floor_Sec_C_M.tres",
+"use_external/path": "uid://dkq22kd14xhg5"
+},
+"MI_Hall_Vent_A_M": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Hall_Vent_A_M.tres",
+"use_external/path": "uid://d1dqmak8dlsfa"
+},
+"MI_Inscriptions_Set_2": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Inscriptions_Set_2.tres",
+"use_external/path": "uid://cdrjycytmib2w"
+},
+"MI_LampLight": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_LampLight.tres",
+"use_external/path": "uid://bps7y2d31abmk"
+},
+"MI_Light_Green": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Light_Green.tres",
+"use_external/path": "uid://c0cptgtk7awoj"
+},
+"MI_Light_Red": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Light_Red.tres",
+"use_external/path": "uid://bcu1uni2nne2t"
+},
+"MI_Lirat_Leaves": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Lirat_Leaves.tres",
+"use_external/path": "uid://cvixjm2vdtnj7"
+},
+"MI_Microscope": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Microscope.tres",
+"use_external/path": "uid://dr6xqrcccbg0b"
+},
+"MI_ObjectInscriptions": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_ObjectInscriptions.tres",
+"use_external/path": "uid://1m250c7f4tc1"
+},
+"MI_Painted_Metal_Dark_1": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Painted_Metal_Dark_1.tres",
+"use_external/path": "uid://xs04le5oc7hv"
+},
+"MI_Painted_Metal_Dark_2": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Painted_Metal_Dark_2.tres",
+"use_external/path": "uid://u73w5dejpwpl"
+},
+"MI_Painted_Metal_Grey": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Painted_Metal_Grey.tres",
+"use_external/path": "uid://he8erdcnni7a"
+},
+"MI_Pipes_A_M": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Pipes_A_M.tres",
+"use_external/path": "uid://b4mpih06tv5mm"
+},
+"MI_Plant_Grower": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Plant_Grower.tres",
+"use_external/path": "uid://ljb2n8cmhgy8"
+},
+"MI_Plant_Grower_Capsule": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Plant_Grower_Capsule.tres",
+"use_external/path": "uid://bq8clhjofb08g"
+},
+"MI_Props": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Props.tres",
+"use_external/path": "uid://sgsgbwvy15dy"
+},
+"MI_Screw": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Screw.tres",
+"use_external/path": "uid://b7jmpxf3ccagr"
+},
+"MI_Solid_Black": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Solid_Black.tres",
+"use_external/path": "uid://l0h2dd4yudun"
+},
+"MI_TableLamp": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_TableLamp.tres",
+"use_external/path": "uid://celvuq0jjlpp7"
+},
+"MI_TempControl": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_TempControl.tres",
+"use_external/path": "uid://c0umi2gsfhvlg"
+},
+"MI_TempControl_Screen": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_TempControl_Screen.tres",
+"use_external/path": "uid://didld4a2yn18k"
+},
+"MI_Trims_AB_M": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Trims_AB_M.tres",
+"use_external/path": "uid://cs800d034cksn"
+},
+"MI_Trims_A_M": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Trims_A_M.tres",
+"use_external/path": "uid://cx1myf3emrg6w"
+},
+"MI_Trims_B": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Trims_B.tres",
+"use_external/path": "uid://bpbcm4bp2co1h"
+},
+"MI_Trims_C": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Trims_C.tres",
+"use_external/path": "uid://b0yefmq2ekxy2"
+},
+"MI_Trims_C_Dark": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Trims_C_Dark.tres",
+"use_external/path": "uid://dxlcpay4imqr7"
+},
+"MI_Trims_C_DarkGray": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Trims_C_DarkGray.tres",
+"use_external/path": "uid://cqynnjtje3bpx"
+},
+"MI_Trims_C_LightGray": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_Trims_C_LightGray.tres",
+"use_external/path": "uid://ded24jvvpdf4y"
+},
+"MI_WhiteMetal": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/MI_WhiteMetal.tres",
+"use_external/path": "uid://n0vaw5nmaqqy"
+},
+"M_Glass_Opaque": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/M_Glass_Opaque.tres",
+"use_external/path": "uid://duc66pecl8hjj"
+},
+"M_Inscriptions": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/M_Inscriptions.tres",
+"use_external/path": "uid://0iqf7wdc0noa"
+},
+"M_Light": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/M_Light.tres",
+"use_external/path": "uid://o84bocewbf5j"
+},
+"M_SimpleSkyDome": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/M_SimpleSkyDome.tres",
+"use_external/path": "uid://deiohe3lqs6ec"
+},
+"Material.001": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/Material.001.tres",
+"use_external/path": "uid://vynwu0jc3ysc"
+},
+"Mi_Box_2_Sealed_Old": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/assets/models/level/materials/Mi_Box_2_Sealed_Old.tres",
+"use_external/path": "uid://ckj0h32n6rmwn"
+}
+}
+}
 gltf/naming_version=2
 gltf/embedded_image_handling=1

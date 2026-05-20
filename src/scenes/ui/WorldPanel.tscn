@@ -1,0 +1,122 @@
+[gd_scene format=3 uid="uid://bivtafgs7l3mr"]
+
+[ext_resource type="Script" uid="uid://b1jr0tvri5q47" path="res://src/scripts/ui/world_panel.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://crgd3640b2fns" path="res://src/scripts/components/interactable.gd" id="2_interact"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_world"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_world"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_world"]
+resource_local_to_scene = true
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_world")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_placeholder"]
+size = Vector3(1, 1, 0.01)
+
+[node name="WorldPanel" type="Node3D" unique_id=1116460530 node_paths=PackedStringArray("mesh", "area", "viewport", "close_btn", "interactable")]
+script = ExtResource("1_script")
+mesh = NodePath("MeshInstance3D")
+area = NodePath("MeshInstance3D/StaticBody3D")
+viewport = NodePath("SubViewport")
+close_btn = NodePath("SubViewport/ColorRect/HBoxContainer/Button")
+interactable = NodePath("MeshInstance3D/StaticBody3D/CollisionShape3D")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=917007220]
+disable_3d = true
+transparent_bg = true
+gui_embed_subwindows = true
+render_target_update_mode = 4
+
+[node name="ColorRect" type="ColorRect" parent="SubViewport" unique_id=601854354]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.12549, 0.12549, 0.12549, 0.784314)
+
+[node name="Label" type="Label" parent="SubViewport/ColorRect" unique_id=1417496986]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "WORLD UI PANEL"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SubViewport/ColorRect" unique_id=1265780505]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -29.0
+offset_top = -171.0
+offset_right = 29.0
+offset_bottom = -131.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Button" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=1607946348]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button2" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=724970946]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button3" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=2035698409]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button4" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=1846775800]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button5" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=1288396811]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button6" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=1506684087]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button7" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=863403779]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button8" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=695131470]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button9" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=1739926817]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button10" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=1595917498]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="Button11" type="Button" parent="SubViewport/ColorRect/HBoxContainer" unique_id=1358479714]
+layout_mode = 2
+text = "CLOSE"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=252857617]
+mesh = SubResource("QuadMesh_world")
+surface_material_override/0 = SubResource("StandardMaterial3D_world")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=387856127]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=910226089]
+shape = SubResource("BoxShape3D_placeholder")
+script = ExtResource("2_interact")

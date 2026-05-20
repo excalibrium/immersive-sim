@@ -34,6 +34,7 @@ var default_settings = {
 	},
 	"input": {
 		"mouse_sensitivity": 0.002,
+		"joy_sensitivity": 0.03,
 		"keybinds": {
 			"move_forward": KEY_W,
 			"move_backward": KEY_S,
@@ -73,8 +74,11 @@ func load_settings() -> void:
 		_apply_audio_setting(key, val)
 	
 	# Load Input
-	var sensitivity = _config.get_value("input", "mouse_sensitivity", default_settings.input.mouse_sensitivity)
-	_apply_input_setting("mouse_sensitivity", sensitivity)
+	var mouse_sensitivity = _config.get_value("input", "mouse_sensitivity", default_settings.input.mouse_sensitivity)
+	_apply_input_setting("mouse_sensitivity", mouse_sensitivity)
+	
+	var joy_sensitivity = _config.get_value("input", "joy_sensitivity", default_settings.input.joy_sensitivity)
+	_apply_input_setting("joy_sensitivity", joy_sensitivity)
 	
 	var binds = _config.get_value("input", "keybinds", default_settings.input.keybinds)
 	for action in binds:
@@ -201,16 +205,22 @@ func _apply_audio_setting(key: String, value: Variant) -> void:
 		AudioServer.set_bus_volume_db(bus_index, linear_to_db(value))
 		AudioServer.set_bus_mute(bus_index, value < 0.01)
 
-func _apply_input_setting(_key: String, _value: Variant) -> void:
-	pass
+func _apply_input_setting(key: String, value: Variant) -> void:
+	setting_changed.emit("input", key, value)
 
 func _apply_keybind(action: String, keycode: int) -> void:
 	if not InputMap.has_action(action):
 		return
 		
-	InputMap.action_erase_events(action)
+	# Only remove existing key events to preserve joypad mappings
+	var events = InputMap.action_get_events(action)
+	for event in events:
+		if event is InputEventKey:
+			InputMap.action_erase_event(action, event)
+			
 	var new_event = InputEventKey.new()
 	new_event.physical_keycode = keycode
+	new_event.pressed = false # Project Settings store 'up' state for map definitions
 	InputMap.action_add_event(action, new_event)
 
 func _apply_graphics_setting(key: String, value: Variant) -> void:

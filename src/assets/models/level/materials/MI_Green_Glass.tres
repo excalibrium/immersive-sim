@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://u0la203slua"]
+
+[resource]
+resource_name = "MI_Green_Glass"
+transparency = 4
+albedo_color = Color(0.6039216, 0.69803923, 0.80784315, 0.3372549)
+metallic = 1.0
+roughness = 0.0

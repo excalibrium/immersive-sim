@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://c0umi2gsfhvlg"]
+
+[ext_resource type="Texture2D" uid="uid://cfuvh8w5ym7ws" path="res://src/assets/models/level/modular_level_kit_T_TempControl_Diff.webp" id="1_mlcbv"]
+[ext_resource type="Texture2D" uid="uid://dmxgcnmpsuei3" path="res://src/assets/models/level/modular_level_kit_T_TempControl_N_normals.webp" id="2_2e37p"]
+
+[resource]
+resource_name = "MI_TempControl"
+cull_mode = 2
+albedo_texture = ExtResource("1_mlcbv")
+metallic = 1.0
+roughness = 0.5527864
+normal_enabled = true
+normal_texture = ExtResource("2_2e37p")

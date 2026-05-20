@@ -1,0 +1,17 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://he8erdcnni7a"]
+
+[ext_resource type="Texture2D" uid="uid://cyco7s20qfopf" path="res://src/assets/models/level/modular_level_kit_T_Painted_Metal.webp" id="1_73odo"]
+[ext_resource type="Texture2D" uid="uid://dgao1kkashjqv" path="res://src/assets/models/level/modular_level_kit_T_Painted_Metal_Roughness.webp" id="2_gedoo"]
+[ext_resource type="Texture2D" uid="uid://cunfloelhler4" path="res://src/assets/models/level/test.webp" id="3_73odo"]
+
+[resource]
+resource_name = "MI_Painted_Metal_Grey"
+cull_mode = 2
+albedo_texture = ExtResource("1_73odo")
+metallic = 0.2681818
+metallic_texture = ExtResource("2_gedoo")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("2_gedoo")
+roughness_texture_channel = 1
+normal_enabled = true
+normal_texture = ExtResource("3_73odo")

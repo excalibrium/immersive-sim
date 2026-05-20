@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://d3juvi6f2pumk"]
+
+[ext_resource type="Texture2D" uid="uid://ctoqlxk1vs0hu" path="res://src/assets/models/level/modular_level_kit_T_Base_Diff.webp" id="1_vcgm4"]
+[ext_resource type="Texture2D" uid="uid://coksspya0yw38" path="res://src/assets/models/level/modular_level_kit_T_Base_N_normals.webp" id="2_cwepe"]
+
+[resource]
+resource_name = "MI_Base_Light"
+cull_mode = 2
+albedo_texture = ExtResource("1_vcgm4")
+metallic = 1.0
+roughness = 0.5527864
+normal_enabled = true
+normal_texture = ExtResource("2_cwepe")

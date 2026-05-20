@@ -13,8 +13,7 @@ func _ready() -> void:
 	# Discard any unapplied changes from previous sessions
 	Settings.discard_pending_video_settings()
 	
-	# Pause game
-	TimeManager.time_scale = 0.0
+	WindowManager.push_mouse_state(WindowManager.MouseState.VISIBLE)
 
 	# Setup Tabs
 	for child in tabs_container.get_children():
@@ -32,8 +31,13 @@ func _ready() -> void:
 	build_category("Video")
 
 func _on_back_pressed():
-	TimeManager.time_scale = 1.0
+	WindowManager.pop_mouse_state()
 	back_pressed.emit()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		_on_back_pressed()
+		get_viewport().set_input_as_handled()
 
 func _on_apply_pressed():
 	Settings.apply_video_settings()
@@ -91,6 +95,9 @@ func setup_audio():
 func setup_input():
 	add_slider("Mouse Sensitivity", 0.0001, 0.01, 0.0001, Settings.get_input_setting("mouse_sensitivity"),
 		func(val): Settings.save_input_setting("mouse_sensitivity", val))
+	
+	add_slider("Controller Sensitivity", 0.01, 0.1, 0.005, Settings.get_input_setting("joy_sensitivity"),
+		func(val): Settings.save_input_setting("joy_sensitivity", val))
 
 func setup_graphics():
 	add_toggle("Compatibility Mode", Settings.get_graphics_setting("compatibility_mode"),

@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://wiydppgl1f3k"]
+
+[ext_resource type="Texture2D" uid="uid://cs2ljk463v3ty" path="res://src/assets/models/level/modular_level_kit_T_Hall_Floor_Main_Diff.webp" id="1_sh3dg"]
+[ext_resource type="Texture2D" uid="uid://bj3801ydu0l0g" path="res://src/assets/models/level/modular_level_kit_T_Hall_Floor_Main_N_normals.webp" id="2_ccn5d"]
+
+[resource]
+resource_name = "MI_Hall_Floor_Main_M"
+cull_mode = 2
+albedo_texture = ExtResource("1_sh3dg")
+metallic = 1.0
+roughness = 0.5527864
+normal_enabled = true
+normal_texture = ExtResource("2_ccn5d")

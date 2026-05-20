@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b7jmpxf3ccagr"]
+
+[ext_resource type="Texture2D" uid="uid://ctmueayx7ix48" path="res://src/assets/models/level/modular_level_kit_T_Screw_Diff.webp" id="1_a2s21"]
+[ext_resource type="Texture2D" uid="uid://cd6yev2phaxf1" path="res://src/assets/models/level/modular_level_kit_T_Screw_N_normals.webp" id="2_iemwr"]
+
+[resource]
+resource_name = "MI_Screw"
+cull_mode = 2
+albedo_texture = ExtResource("1_a2s21")
+metallic = 1.0
+roughness = 0.5527864
+normal_enabled = true
+normal_texture = ExtResource("2_iemwr")

@@ -9,7 +9,7 @@ var target_rotation: float = 0.0
 func toggle():
 	super.toggle() # Handle base state and signal
 	target_rotation = open_rotation if is_open else 0.0
-
+ 
 func _apply_animation(delta: float):
 	var parent = get_parent() as Node3D
 	if parent:

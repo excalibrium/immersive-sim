@@ -35,7 +35,7 @@ func _process(delta: float):
 func _apply_animation(_delta: float):
 	push_error("AbstractDoor: _apply_animation() not implemented in subclass: ", name)
 
-func _check_if_denied() -> bool:
+func _check_if_denied(_by_whom: Node = null) -> bool:
 	if is_locked and required_item_id != "" and Game.inventory:
 		return not Game.inventory.has_item(required_item_id)
 	return false

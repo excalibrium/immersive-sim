@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://0iqf7wdc0noa"]
+
+[ext_resource type="Texture2D" uid="uid://b1njhyoag6cj4" path="res://src/assets/models/level/modular_level_kit_T_Inscriptions_Mask_1.webp" id="1_rridy"]
+
+[resource]
+resource_name = "M_Inscriptions"
+transparency = 4
+cull_mode = 2
+albedo_color = Color(0.81639516, 0.68567806, 0.29329383, 1)
+albedo_texture = ExtResource("1_rridy")

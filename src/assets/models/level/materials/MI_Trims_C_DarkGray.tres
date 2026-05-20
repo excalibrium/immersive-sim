@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://cqynnjtje3bpx"]
+
+[resource]
+resource_name = "MI_Trims_C_DarkGray"
+cull_mode = 2
+albedo_color = Color(0.50196075, 0.50196075, 0.50196075, 1)
+metallic = 1.0
+roughness = 0.5527864

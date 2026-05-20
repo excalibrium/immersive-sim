@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://th1v88ef1yir"]
+
+[resource]
+resource_name = "MI_Black_Glass"
+cull_mode = 2
+albedo_color = Color(0, 0, 0, 1)
+metallic = 1.0
+roughness = 0.5527864

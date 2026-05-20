@@ -1,0 +1,22 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://2tx2vg05ickq"]
+
+[ext_resource type="Texture2D" uid="uid://odu5mxxi6rh5" path="res://src/assets/models/level/modular_level_kit_T_Computer_Desk_D.webp" id="1_4eyoa"]
+[ext_resource type="Texture2D" uid="uid://bhxsnqykqiya0" path="res://src/assets/models/level/modular_level_kit_T_Computer_Desk_Emissive.webp" id="2_t48fu"]
+[ext_resource type="Texture2D" uid="uid://bnuqw831jxorr" path="res://src/assets/models/level/modular_level_kit_T_Computer_Desk_Metallic-T_Computer_Desk_Roughness.webp" id="3_53avu"]
+[ext_resource type="Texture2D" uid="uid://baw2umupgpjle" path="res://src/assets/models/level/modular_level_kit_T_Computer_Desk_Normal.webp" id="4_i4bi2"]
+
+[resource]
+resource_name = "MI_Desk_A"
+cull_mode = 2
+albedo_texture = ExtResource("1_4eyoa")
+metallic = 1.0
+metallic_texture = ExtResource("3_53avu")
+metallic_texture_channel = 2
+roughness_texture = ExtResource("3_53avu")
+roughness_texture_channel = 1
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_operator = 1
+emission_texture = ExtResource("2_t48fu")
+normal_enabled = true
+normal_texture = ExtResource("4_i4bi2")

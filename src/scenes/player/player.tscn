@@ -2,11 +2,12 @@
 
 [ext_resource type="Script" uid="uid://b1hc4kl6l2jm5" path="res://src/scenes/player/player.gd" id="1_swhsd"]
 [ext_resource type="Script" uid="uid://3xnkdkqmefvu" path="res://src/scripts/player/player_interactor.gd" id="2_interactor"]
+[ext_resource type="Script" uid="uid://cw05tcffh0etf" path="res://src/scripts/player/player_pickup.gd" id="3_pickup"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_yx56f"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_swhsd"]
-radius = 0.4
+radius = 0.25
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qopur"]
 
@@ -26,10 +27,26 @@ shape = SubResource("CapsuleShape3D_swhsd")
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D" unique_id=1269249028]
 target_position = Vector3(0, 0, -3)
 
+[node name="SpotLight3D" type="SpotLight3D" parent="Camera3D" unique_id=643220316]
+transform = Transform3D(0.9998477, 0, 0.017452406, 0, 1, 0, -0.017452406, 0, 0.9998477, 0.73, 0, -0.45)
+shadow_enabled = true
+spot_range = 25.0
+spot_angle = 25.0
+
+[node name="HoldPosition" type="Marker3D" parent="Camera3D" unique_id=20240517]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
 [node name="PlayerInteractor" type="Node3D" parent="." unique_id=661214063 node_paths=PackedStringArray("raycast", "proximity_area")]
 script = ExtResource("2_interactor")
 raycast = NodePath("../Camera3D/RayCast3D")
 proximity_area = NodePath("../ProximityArea")
+
+[node name="PlayerPickup" type="Node3D" parent="." unique_id=20240518 node_paths=PackedStringArray("interactor", "camera_3d")]
+script = ExtResource("3_pickup")
+interactor = NodePath("../PlayerInteractor")
+camera_3d = NodePath("../Camera3D")
+break_distance = 4.0
+min_hold_distance = 0.5
 
 [node name="ProximityArea" type="Area3D" parent="." unique_id=353082543]
 collision_layer = 0
