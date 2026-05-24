@@ -1,5 +1,5 @@
 extends Node3D
-
+class_name WorldPanel
 ## A 3D panel that displays a SubViewport and handles mouse interaction.
 ## Works with the Interactable component to focus/unfocus.
 
@@ -34,7 +34,7 @@ func _ready():
 	_cache_mesh_data()
 
 func _cache_mesh_data():
-	if mesh and mesh.mesh:
+	if mesh and mesh.mesh and mesh.mesh is ArrayMesh:
 		_cached_mdt = MeshDataTool.new()
 		# Surface 0 is standard for single-material UI panels
 		if _cached_mdt.create_from_surface(mesh.mesh, 0) == OK:

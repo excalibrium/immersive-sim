@@ -9,10 +9,10 @@ var profile: EnvironmentProfile = null
 func start_run() -> void:
 	profile = EnvironmentProfile.new()
 	
-	# Snapped to 5% increments for moisture
-	var initial_moisture = snapped(randf_range(20.0, 90.0), 5.0)
-	# Snapped to 1°C increments for heat
-	var initial_heat = snapped(randf_range(15.0, 45.0), 1.0)
+	# Snapped to 5% increments for moisture, always starting "too high" (> MOISTURE_MAX_BEST)
+	var initial_moisture = snapped(randf_range(EnvironmentProfile.MOISTURE_MAX_BEST + 5.0, EnvironmentProfile.MOISTURE_MAX_LIMIT), 5.0)
+	# Snapped to 1°C increments for heat, always starting "too high" (> HEAT_MAX_BEST)
+	var initial_heat = snapped(randf_range(EnvironmentProfile.HEAT_MAX_BEST + 1.0, EnvironmentProfile.HEAT_MAX_LIMIT), 1.0)
 	
 	profile.moisture = initial_moisture
 	profile.heat = initial_heat

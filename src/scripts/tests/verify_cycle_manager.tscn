@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://c83fcual0ofyr"]
+
+[ext_resource type="Script" path="res://src/scripts/tests/verify_cycle_manager.gd" id="1_test"]
+
+[node name="TestRunner" type="Node"]
+script = ExtResource("1_test")

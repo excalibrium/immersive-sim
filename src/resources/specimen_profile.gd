@@ -11,7 +11,18 @@ enum Phase {
 	ADULT
 }
 
+# PLACEHOLDER: Temporary shape morphology enums. Will be replaced by real Child/Adult models later.
+enum Morphology {
+	CUBE,
+	SPHERE,
+	CAPSULE,
+	CYLINDER,
+	TORUS
+}
+
 @export var phase: Phase = Phase.EGG
+# PLACEHOLDER: Temporary morphology configuration.
+@export var morphology: Morphology = Morphology.CAPSULE
 
 # --- Primary Variables ---
 @export var neural_plasticity: float = 0.0
@@ -46,6 +57,10 @@ var action_log: Array = []  # max 3 entries, most recent first
 # Increments on PUNISH, decrements on REINFORCE, clamps 0-100.
 # Drives UI label shifts only — does not directly write to behavioral variables.
 var ruthlessness: float = 0.0
+# Specimen energy level. Initialized to 7.0 as a safe default for Cycle 1 (matching 5 + current_cycle * 2 where current_cycle is 1)
+# to prevent immediate exhaustion penalty before CycleManager.start_cycle() executes.
+# Reset to 5.0 + current_cycle * 2.0 at each cycle start.
+var energy: float = 7.0
 
 ## Initializes the profile with run-start plasticity.
 func initialize(plasticity_roll: float) -> void:

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://d3tb4kj2fo317"]
+
+[ext_resource type="Script" path="res://src/scripts/tests/scratch_run_world.gd" id="1_scratch"]
+
+[node name="ScratchRunner" type="Node"]
+script = ExtResource("1_scratch")

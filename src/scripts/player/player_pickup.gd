@@ -94,6 +94,9 @@ func _ready() -> void:
 	hold_distance = default_hold_distance
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not WindowManager.is_mouse_captured():
+		return
+		
 	if event.is_action_pressed("primary_action"):
 		_try_pickup()
 	elif event.is_action_released("primary_action"):

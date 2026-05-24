@@ -15,7 +15,13 @@ var current_target: Interactable = null
 var current_state: State = State.NONE
 
 func _physics_process(_delta: float):
-	if TimeManager.time_scale <= 0.0:
+	if TimeManager.time_scale <= 0.0 or not WindowManager.is_mouse_captured():
+		# Clear target if mouse is visible (UI is open)
+		if current_target:
+			current_target.unfocus()
+			current_target = null
+			current_state = State.NONE
+			target_state_changed.emit(current_state)
 		return
 		
 	var new_target = _find_best_target()
@@ -38,7 +44,7 @@ func _physics_process(_delta: float):
 		target_state_changed.emit(current_state)
 
 func _unhandled_input(event: InputEvent):
-	if TimeManager.time_scale <= 0.0:
+	if TimeManager.time_scale <= 0.0 or not WindowManager.is_mouse_captured():
 		return
 		
 	if event.is_action_pressed("interact"):
@@ -49,6 +55,8 @@ func _find_best_target() -> Interactable:
 	# 1. Check Raycast (highest priority)
 	if raycast and raycast.is_colliding():
 		var collider = raycast.get_collider()
+		if Input.is_action_just_pressed("interact"):
+			print("Debug: Player interact raycast hit: ", collider.name, " (", collider.get_path(), ")")
 		var interactable = _get_interactable_from_node(collider)
 		if interactable:
 			return interactable
