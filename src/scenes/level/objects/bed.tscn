@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://jx2mk3gyej5p"]
+
+[ext_resource type="Script" uid="uid://chq6sbjak6oni" path="res://src/scripts/components/bed.gd" id="1_bed_script"]
+[ext_resource type="PackedScene" uid="uid://dp7di2gy8rtpp" path="res://src/assets/models/objects/Bed/Bed.glb" id="2_bed_glb"]
+[ext_resource type="Script" uid="uid://crgd3640b2fns" path="res://src/scripts/components/interactable.gd" id="3_interactable"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bed"]
+size = Vector3(1.1, 0.6, 2)
+
+[node name="Bed" type="StaticBody3D" unique_id=27213506]
+script = ExtResource("1_bed_script")
+
+[node name="BedModel" parent="." unique_id=1845303195 instance=ExtResource("2_bed_glb")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=457315594]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, -2.9802322e-08)
+shape = SubResource("BoxShape3D_bed")
+
+[node name="Interactable" type="Node3D" parent="." unique_id=1756549135]
+script = ExtResource("3_interactable")
+interact_text_key = "INTERACT_SLEEP"

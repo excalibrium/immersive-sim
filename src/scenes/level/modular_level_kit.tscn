@@ -11,10 +11,10 @@
 [ext_resource type="Material" uid="uid://rsg4gqbex7jv" path="res://src/assets/models/level/materials/MI_Box_1_Sealed.tres" id="6_0ek8o"]
 [ext_resource type="Texture2D" uid="uid://cjwn4ec6bxexq" path="res://src/assets/models/level/modular_level_kit_T_Chair_Metallic-T_Chair_Roughness.webp" id="6_elfmc"]
 [ext_resource type="Texture2D" uid="uid://5xtdn703ahjr" path="res://src/assets/models/level/modular_level_kit_T_Chair_Normal.webp" id="7_0cl8x"]
-[ext_resource type="Script" uid="uid://crgd3640b2fns" path="res://src/scripts/components/interactable.gd" id="7_3i3mu"]
 [ext_resource type="Material" uid="uid://j0hwmg6vx387" path="res://src/assets/models/level/materials/MI_Box_2_Sealed.tres" id="7_ofguk"]
 [ext_resource type="Script" uid="uid://xtunqxnsspnj" path="res://src/scripts/components/pickupable.gd" id="8_t5w1w"]
 [ext_resource type="Material" uid="uid://sgsgbwvy15dy" path="res://src/assets/models/level/materials/MI_Props.tres" id="9_t5w1w"]
+[ext_resource type="PackedScene" uid="uid://jx2mk3gyej5p" path="res://src/scenes/level/objects/bed.tscn" id="15_ofguk"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_tpmrw"]
 _surfaces = [{
@@ -441,20 +441,15 @@ transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -6.0
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box5" index="0" unique_id=1663875418]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box5" index="1" unique_id=62031432 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box5" index="0" unique_id=62031432 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box5" index="2" unique_id=1903446619]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box5" index="1" unique_id=1903446619]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_x8d23")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box5" index="3" unique_id=2023002388]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box5" index="2" unique_id=2023002388]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.13999987, 0)
 shape = SubResource("BoxShape3D_biwxv")
 
@@ -466,20 +461,15 @@ transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -6.0
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box4" index="0" unique_id=1484018614]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box4" index="1" unique_id=1018427434 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box4" index="0" unique_id=1018427434 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box4" index="2" unique_id=1264504707]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box4" index="1" unique_id=1264504707]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_x8d23")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box4" index="3" unique_id=1881494643]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box4" index="2" unique_id=1881494643]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.13999987, 0)
 shape = SubResource("BoxShape3D_biwxv")
 
@@ -491,20 +481,15 @@ transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -6.0
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box3" index="0" unique_id=1967005582]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box3" index="1" unique_id=1353868639 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box3" index="0" unique_id=1353868639 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box3" index="2" unique_id=204859666]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box3" index="1" unique_id=204859666]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_x8d23")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box3" index="3" unique_id=52495686]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box3" index="2" unique_id=52495686]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.13999987, 0)
 shape = SubResource("BoxShape3D_biwxv")
 
@@ -516,20 +501,15 @@ transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -6.0
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box2" index="0" unique_id=280341279]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box2" index="1" unique_id=2104471432 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box2" index="0" unique_id=2104471432 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box2" index="2" unique_id=2020940453]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box2" index="1" unique_id=2020940453]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_x8d23")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box2" index="3" unique_id=124819377]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box2" index="2" unique_id=124819377]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.13999987, 0)
 shape = SubResource("BoxShape3D_biwxv")
 
@@ -542,20 +522,15 @@ collision_layer = 5
 collision_mask = 4
 mass = 2.0
 
-[node name="Interactable" type="Node3D" parent="Objects/box" index="0" unique_id=70942549]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box" index="1" unique_id=1010018134 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box" index="0" unique_id=1010018134 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box" index="2" unique_id=1700914034]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box" index="1" unique_id=1700914034]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_x8d23")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box" index="3" unique_id=1247247166]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box" index="2" unique_id=1247247166]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.13999987, 0)
 shape = SubResource("BoxShape3D_biwxv")
 
@@ -567,20 +542,15 @@ transform = Transform3D(3.1391647e-07, 0, -1, 0, 1, 0, 1, 0, 3.1391647e-07, -6.3
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box6" index="0" unique_id=663579401]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box6" index="1" unique_id=1276616258 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box6" index="0" unique_id=1276616258 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box6" index="2" unique_id=1602916584]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box6" index="1" unique_id=1602916584]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.23, 0)
 shape = SubResource("BoxShape3D_ofguk")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box6" index="3" unique_id=1863155129]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box6" index="2" unique_id=1863155129]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_biwxv")
 
@@ -592,20 +562,15 @@ transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -6.3
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box7" index="0" unique_id=679380733]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box7" index="1" unique_id=28589643 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box7" index="0" unique_id=28589643 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box7" index="2" unique_id=422168208]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box7" index="1" unique_id=422168208]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_biwxv")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="Objects/box7" index="3" unique_id=1349523766]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Objects/box7" index="2" unique_id=1349523766]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.23, 0)
 shape = SubResource("BoxShape3D_ofguk")
 
@@ -617,20 +582,15 @@ transform = Transform3D(0.34202015, 0, 0.9396926, 0, 1, 0, -0.9396926, 0, 0.3420
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box8" index="0" unique_id=1229140085]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box8" index="1" unique_id=1255564800 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box8" index="0" unique_id=1255564800 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box8" index="2" unique_id=145725710]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box8" index="1" unique_id=145725710]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_biwxv")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box8" index="3" unique_id=209410275]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box8" index="2" unique_id=209410275]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.23, 0)
 shape = SubResource("BoxShape3D_ofguk")
 
@@ -642,20 +602,15 @@ transform = Transform3D(-0.9396926, 0, -0.3420202, 0, 1, 0, 0.3420202, 0, -0.939
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box9" index="0" unique_id=1352372349]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box9" index="1" unique_id=669135544 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box9" index="0" unique_id=669135544 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box9" index="2" unique_id=696185943]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box9" index="1" unique_id=696185943]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_biwxv")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box9" index="3" unique_id=1721718056]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box9" index="2" unique_id=1721718056]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.23, 0)
 shape = SubResource("BoxShape3D_ofguk")
 
@@ -667,20 +622,15 @@ transform = Transform3D(-0.9848077, 0, 0.1736483, 0, 1, 0, -0.1736483, 0, -0.984
 collision_layer = 5
 collision_mask = 4
 
-[node name="Interactable" type="Node3D" parent="Objects/box10" index="0" unique_id=435123323]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/box10" index="1" unique_id=2141433106 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/box10" index="0" unique_id=2141433106 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box10" index="2" unique_id=501545134]
+[node name="SM_Box_1_Sealed5" type="MeshInstance3D" parent="Objects/box10" index="1" unique_id=501545134]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_biwxv")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box10" index="3" unique_id=5048538]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/box10" index="2" unique_id=5048538]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0.23, 0)
 shape = SubResource("BoxShape3D_ofguk")
 
@@ -757,14 +707,9 @@ mesh = SubResource("ArrayMesh_d6o6r")
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
 shape = SubResource("CylinderShape3D_0fcpd")
 
-[node name="Interactable" type="Node3D" parent="Objects/SM_Microscope/petri_dish" index="2" unique_id=1780910278]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/SM_Microscope/petri_dish" index="3" unique_id=1665727470 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/SM_Microscope/petri_dish" index="2" unique_id=1665727470 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Objects/SM_Microscope" parent_id_path=PackedInt32Array(1007089129) index="1" unique_id=704398426]
 collision_layer = 5
@@ -781,36 +726,31 @@ collision_mask = 4
 mass = 0.05
 continuous_cd = true
 
-[node name="Interactable" type="Node3D" parent="Objects/mug" index="0" unique_id=1796661428]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/mug" index="1" unique_id=1670840960 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/mug" index="0" unique_id=1670840960 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Mug" type="MeshInstance3D" parent="Objects/mug" index="2" unique_id=1278946318]
+[node name="SM_Mug" type="MeshInstance3D" parent="Objects/mug" index="1" unique_id=1278946318]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_0oksv")
 
-[node name="CollisionShape3D15" type="CollisionShape3D" parent="Objects/mug" index="3" unique_id=473701885]
+[node name="CollisionShape3D15" type="CollisionShape3D" parent="Objects/mug" index="2" unique_id=473701885]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, -0.003741026, 0)
 shape = SubResource("CylinderShape3D_t5w1w")
 
-[node name="CollisionShape3D16" type="CollisionShape3D" parent="Objects/mug" index="4" unique_id=1090007351]
+[node name="CollisionShape3D16" type="CollisionShape3D" parent="Objects/mug" index="3" unique_id=1090007351]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0.03691864, 0.054, -0.00027942657)
 shape = SubResource("BoxShape3D_0ek8o")
 
-[node name="CollisionShape3D17" type="CollisionShape3D" parent="Objects/mug" index="5" unique_id=1695152977]
+[node name="CollisionShape3D17" type="CollisionShape3D" parent="Objects/mug" index="4" unique_id=1695152977]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, -0.035905838, 0.054, -0.00027942657)
 shape = SubResource("BoxShape3D_0ek8o")
 
-[node name="CollisionShape3D18" type="CollisionShape3D" parent="Objects/mug" index="6" unique_id=1525197777]
+[node name="CollisionShape3D18" type="CollisionShape3D" parent="Objects/mug" index="5" unique_id=1525197777]
 transform = Transform3D(-4.3711387e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.3711387e-10, 0.0007667542, 0.054, 0.035786152)
 shape = SubResource("BoxShape3D_0ek8o")
 
-[node name="CollisionShape3D19" type="CollisionShape3D" parent="Objects/mug" index="7" unique_id=557858569]
+[node name="CollisionShape3D19" type="CollisionShape3D" parent="Objects/mug" index="6" unique_id=557858569]
 transform = Transform3D(-4.3711387e-10, 0, 0.01, 0, 0.01, 0, -0.01, 0, -4.3711387e-10, 0.00076675403, 0.054, -0.03704357)
 shape = SubResource("BoxShape3D_0ek8o")
 
@@ -825,16 +765,11 @@ continuous_cd = true
 transform = Transform3D(0.009999999, 0, 0, 0, -4.3711385e-10, -0.009999999, 0, 0.009999999, -4.3711385e-10, -8.881783e-18, 0.0039155483, 1.7115406e-10)
 shape = SubResource("CapsuleShape3D_t5w1w")
 
-[node name="Interactable" type="Node3D" parent="Objects/pen" index="1" unique_id=276740873]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/pen" index="2" unique_id=1928435888 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/pen" index="1" unique_id=1928435888 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
 
-[node name="SM_Pen" type="MeshInstance3D" parent="Objects/pen" index="3" unique_id=425639001]
+[node name="SM_Pen" type="MeshInstance3D" parent="Objects/pen" index="2" unique_id=425639001]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_hm4sf")
 
@@ -867,29 +802,27 @@ texture_emission = SubResource("GradientTexture2D_1wtye")
 [node name="SM_TempControl" parent="Objects" parent_id_path=PackedInt32Array(23311387) index="52" unique_id=536093740]
 visible = false
 
-[node name="RigidBody3D" type="RigidBody3D" parent="Objects" parent_id_path=PackedInt32Array(23311387) index="54" unique_id=735017443]
+[node name="chair" type="RigidBody3D" parent="Objects" parent_id_path=PackedInt32Array(23311387) index="54" unique_id=735017443]
 transform = Transform3D(-0.64278764, 0, 0.76604444, 0, 1, 0, -0.76604444, 0, -0.64278764, -20.8, 1.8, 7.3)
 collision_layer = 5
 collision_mask = 4
 mass = 7.0
 
-[node name="SM_Chair" type="MeshInstance3D" parent="Objects/RigidBody3D" index="0" unique_id=1148776417]
+[node name="SM_Chair" type="MeshInstance3D" parent="Objects/chair" index="0" unique_id=1148776417]
 transform = Transform3D(0.01, 0, 0, 0, 0.01, 0, 0, 0, 0.01, 0, 0, 0)
 mesh = SubResource("ArrayMesh_1glp2")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/RigidBody3D" index="1" unique_id=461972890]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/chair" index="1" unique_id=461972890]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 shape = SubResource("BoxShape3D_1wtye")
 
-[node name="CollisionShape3D2" type="CollisionShape3D" parent="Objects/RigidBody3D" index="2" unique_id=1014235351]
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Objects/chair" index="2" unique_id=1014235351]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, -0.325)
 shape = SubResource("BoxShape3D_elfmc")
 
-[node name="Interactable" type="Node3D" parent="Objects/RigidBody3D" index="3" unique_id=458299078]
-script = ExtResource("7_3i3mu")
-metadata/_custom_type_script = "uid://crgd3640b2fns"
-
-[node name="Pickupable" type="Node" parent="Objects/RigidBody3D" index="4" unique_id=1281799771 node_paths=PackedStringArray("body", "interactable")]
+[node name="Pickupable" type="Node3D" parent="Objects/chair" index="3" unique_id=1281799771 node_paths=PackedStringArray("body")]
 script = ExtResource("8_t5w1w")
 body = NodePath("..")
-interactable = NodePath("../Interactable")
+
+[node name="Bed" parent="Objects" parent_id_path=PackedInt32Array(23311387) index="55" unique_id=27213506 instance=ExtResource("15_ofguk")]
+transform = Transform3D(-1.4, 0, 2.1139412e-07, 0, 1.4, 0, -2.1139412e-07, 0, -1.4, -24, 1.7, 11.9)

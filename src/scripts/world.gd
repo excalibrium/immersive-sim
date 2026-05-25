@@ -4,18 +4,22 @@ extends Node3D
 ## Initializes the GameSession and acts as the 'Objective Giver'.
 
 const RS = preload("res://src/scripts/conditioning/reinforcement_system.gd")
-const ND = preload("res://src/scripts/conditioning/neglect_decay.gd")
 
 @onready var crosshair = $UI/Crosshair
 @onready var player = $Player
-@onready var specimen = $Specimen
+@onready var specimen: Specimen = $Specimen
 @onready var monitor_panel = $MonitorPanel
-@onready var lights = $Lights
+@onready var lights: LightSystem = $Lights
+
+## Sibling exports with lookups as fallback
+@export var player_interactor: PlayerInteractor
+@export var radial_ui: InteractionRadial
+@export var specimen_interactable: Interactable
 
 var reinforcement_system: ReinforcementSystem = null
-var neglect_decay: NeglectDecay = null
-var cycle_manager: Node = null
+var cycle_manager: CycleManager = null
 var ap_label: Label = null
+var _is_interacting_with_bed: bool = false
 
 func _enter_tree():
 	# 0. Initialize Game Session early so children can access it in _ready
@@ -29,15 +33,14 @@ func _exit_tree():
 	SpecimenBridge.end_run()
 
 func _ready():
-	var interactor = player.find_child("PlayerInteractor")
-	if interactor:
-		crosshair.setup(interactor)
+	if not player_interactor:
+		player_interactor = player.find_child("PlayerInteractor") as PlayerInteractor
+	if player_interactor:
+		crosshair.setup(player_interactor)
 		
 	# Instantiate systems dynamically for prototype testing
 	reinforcement_system = RS.new()
-	neglect_decay = ND.new()
 	add_child(reinforcement_system)
-	add_child(neglect_decay)
 
 	# Load and instantiate AP HUD Label from scene
 	var ap_label_scene = load("res://src/scenes/ui/APLabel.tscn")
@@ -49,6 +52,10 @@ func _ready():
 	var cycle_manager_script = load("res://src/scripts/systems/cycle_manager.gd")
 	cycle_manager = cycle_manager_script.new()
 	cycle_manager.name = "CycleManager"
+	
+	# Inject dynamic system dependencies downward (Call Down, Signal Up)
+	cycle_manager.external_specimen = specimen
+	cycle_manager.external_lights = lights
 	
 	# Connect ap_changed before adding child to receive initial value
 	cycle_manager.ap_changed.connect(func(new_ap: int):
@@ -63,32 +70,64 @@ func _ready():
 		monitor_panel.end_cycle_requested.connect(_on_monitor_panel_end_cycle_requested)
 
 	# Connect Radial UI events if present in the tree
-	var radial_ui = find_child("RadialUI")
+	if not radial_ui:
+		radial_ui = find_child("RadialUI") as InteractionRadial
 	if radial_ui:
-		radial_ui.subaction_selected.connect(_on_subaction_selected)
+		radial_ui.subaction_selected.connect(func(category, subaction_id):
+			_is_interacting_with_bed = false
+			_on_subaction_selected(category, subaction_id)
+		)
+		radial_ui.ignored.connect(func():
+			_is_interacting_with_bed = false
+		)
+		
+	# Connect to global InteractionBus autoload
+	var bus = get_node_or_null("/root/InteractionBus")
+	if bus:
+		bus.connect("bed_sleep_requested", _on_bed_sleep_requested)
 		
 	# Connect Specimen interaction to open the Radial UI
-	var specimen_interactable = specimen.find_child("Interactable")
+	if not specimen_interactable and specimen:
+		specimen_interactable = specimen.find_child("Interactable") as Interactable
+		
 	if specimen_interactable and radial_ui:
 		specimen_interactable.interacted.connect(func(_interactor):
-			var r = 0.0
 			var log_data = []
-			var phase = 0 # Default to EGG
+			var energy = 0.0
+			var max_energy = 0.0
 			if SpecimenBridge.profile:
-				r = SpecimenBridge.profile.ruthlessness
 				log_data = SpecimenBridge.profile.action_log
-				phase = SpecimenBridge.profile.phase
-			radial_ui.open_menu(r, log_data, phase, specimen.is_sleeping)
+				energy = SpecimenBridge.profile.energy
+				max_energy = SpecimenBridge.profile.get_max_energy()
+			
+			var config = _get_specimen_radial_config()
+			radial_ui.open_menu(log_data, energy, max_energy, config, specimen._current_action if specimen else "")
 		)
 
 	# Connect Specimen actions to update Radial UI real-time logs
 	if specimen and radial_ui:
 		specimen.action_performed.connect(func(_action_id: String):
 			if radial_ui.is_menu_open and SpecimenBridge.profile:
-				radial_ui.update_realtime_data(SpecimenBridge.profile.action_log)
+				if _is_interacting_with_bed:
+					_update_bed_radial_ui()
+				else:
+					var profile = SpecimenBridge.profile
+					radial_ui.update_realtime_data(profile.action_log, profile.energy, profile.get_max_energy(), {}, specimen._current_action)
 		)
 		specimen.sleep_entered.connect(func():
-			radial_ui.transition_to_sleep_layout()
+			if radial_ui.is_menu_open and SpecimenBridge.profile:
+				if _is_interacting_with_bed:
+					_update_bed_radial_ui()
+				else:
+					var profile = SpecimenBridge.profile
+					var config = _get_specimen_radial_config()
+					radial_ui.update_realtime_data(profile.action_log, profile.energy, profile.get_max_energy(), config, specimen._current_action)
+		)
+		
+	# Propagate phase transitions to specimen to control dynamic visual loops (set_process)
+	if cycle_manager and specimen:
+		cycle_manager.phase_transitioned.connect(func(new_phase: int):
+			specimen._on_phase_transitioned(new_phase)
 		)
 
 
@@ -126,7 +165,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				cycle_manager.end_cycle()
 			else:
 				EnvironmentBridge.process_cycle_end(profile)
-				neglect_decay.apply_cycle_decay([])
+				for action_id in profile.action_pool:
+					profile.action_pool[action_id] = max(profile.action_pool[action_id] - 0.5, 1.0)
 				profile.current_cycle += 1
 			_print_status()
 
@@ -154,7 +194,9 @@ func _apply_conditioning_with_energy(type: String) -> void:
 		
 	# Consume AP
 	if cycle_manager:
-		cycle_manager.spend_ap(1) # Conditioning costs 1 AP
+		if not cycle_manager.spend_ap(1):
+			print("World: Action blocked! AP is depleted.")
+			return
 		# Add to addressed actions for neglect decay
 		var last = profile.action_log
 		if last.size() > 0:
@@ -186,7 +228,7 @@ func _apply_conditioning_with_energy(type: String) -> void:
 		if profile.energy <= 0.0 and specimen and not specimen.is_sleeping:
 			specimen.enter_sleep()
 			
-	if lights and lights.has_method("update_hue_from_reward"):
+	if lights:
 		lights.update_hue_from_reward(profile.reward_schema)
 			
 	_print_status()
@@ -198,19 +240,23 @@ func _on_subaction_selected(category: String, action_type: String) -> void:
 	match category:
 		"TOP":
 			if action_upper == "PET":
+				if cycle_manager:
+					if not cycle_manager.spend_ap(1):
+						print("World: Action blocked! AP is depleted.")
+						return
 				if specimen:
 					specimen.apply_sleep_interaction("PET")
-				if cycle_manager:
-					cycle_manager.spend_ap(1)
 				_print_status()
 			else:
 				_apply_conditioning_with_energy("REINFORCE")
 		"BOTTOM":
 			if action_upper == "SHOCK":
+				if cycle_manager:
+					if not cycle_manager.spend_ap(2):
+						print("World: Action blocked! AP is depleted.")
+						return
 				if specimen:
 					specimen.apply_sleep_interaction("SHOCK")
-				if cycle_manager:
-					cycle_manager.spend_ap(2)
 				_print_status()
 			else:
 				_apply_conditioning_with_energy("PUNISH")
@@ -229,13 +275,27 @@ func _on_subaction_selected(category: String, action_type: String) -> void:
 					cycle_manager.end_cycle()
 				else:
 					EnvironmentBridge.process_cycle_end(profile)
-					neglect_decay.apply_cycle_decay([])
+					for action_id in profile.action_pool:
+						profile.action_pool[action_id] = max(profile.action_pool[action_id] - 0.5, 1.0)
 					profile.current_cycle += 1
 				_print_status()
 			elif action_upper == "CERTIFY":
 				if cycle_manager:
 					cycle_manager.trigger_certify_sequence()
 			elif action_upper == "CHECK_STATUS":
+				_print_status()
+			elif action_upper == "SLEEP":
+				if cycle_manager:
+					if profile:
+						if profile.current_cycle == 0:
+							cycle_manager.start_cycle()
+						else:
+							if cycle_manager.is_cycle_active:
+								cycle_manager.end_cycle()
+								await get_tree().create_timer(0.5).timeout
+								cycle_manager.start_cycle()
+							else:
+								cycle_manager.start_cycle()
 				_print_status()
 
 func _on_monitor_panel_end_cycle_requested() -> void:
@@ -244,7 +304,107 @@ func _on_monitor_panel_end_cycle_requested() -> void:
 		cycle_manager.end_cycle()
 	elif profile:
 		EnvironmentBridge.process_cycle_end(profile)
-		if neglect_decay:
-			neglect_decay.apply_cycle_decay([])
+		for action_id in profile.action_pool:
+			profile.action_pool[action_id] = max(profile.action_pool[action_id] - 0.5, 1.0)
 		profile.current_cycle += 1
 	_print_status()
+
+func _on_bed_sleep_requested() -> void:
+	_is_interacting_with_bed = true
+	_update_bed_radial_ui()
+
+func _update_bed_radial_ui() -> void:
+	var profile = SpecimenBridge.profile
+	if not profile:
+		return
+		
+	var specimen_sleeping = true
+	if specimen and not specimen.is_sleeping and profile.phase != SpecimenProfile.Phase.EGG:
+		specimen_sleeping = false
+		
+	var config = {
+		"RIGHT": {
+			"label": "SLEEP",
+			"action": "SLEEP"
+		}
+	}
+	var center_override = {
+		"header": "REST MODULE",
+		"current_action": "CYCLE: " + str(profile.current_cycle),
+		"lines": [],
+		"energy": ""
+	}
+	
+	if specimen_sleeping:
+		center_override["lines"] = [
+			"STATUS: READY",
+			"Specimen is sleeping.",
+			"Select SLEEP to advance cycle."
+		]
+	else:
+		center_override["lines"] = [
+			"STATUS: READY",
+			"Warning: Specimen is active!",
+			"Select SLEEP to advance cycle."
+		]
+		
+	if radial_ui:
+		radial_ui.open_menu([], 0.0, 0.0, config, "", center_override)
+
+func _get_specimen_radial_config() -> Dictionary:
+	var profile = SpecimenBridge.profile
+	if not profile:
+		return {}
+		
+	# If sleeping
+	if specimen and specimen.is_sleeping:
+		return {
+			"TOP": {
+				"label": "PET",
+				"action": "PET"
+			},
+			"BOTTOM": {
+				"label": "SHOCK",
+				"action": "SHOCK"
+			}
+		}
+		
+	# If Egg
+	if profile.phase == SpecimenProfile.Phase.EGG:
+		return {
+			"RIGHT": {
+				"label": "SYSTEM",
+				"subactions": ["END_CYCLE", "CHECK_STATUS"]
+			}
+		}
+		
+	# Awake CHILD/ADULT
+	# Compute ruthlessness labels
+	var r = profile.ruthlessness
+	var tier = 0
+	if r >= SpecimenProfile.COHERENCE_TIER_HIGH:
+		tier = 2
+	elif r >= SpecimenProfile.COHERENCE_TIER_LOW:
+		tier = 1
+		
+	var reinforce_labels = ["REINFORCE", "REWARD", "GRANT RELIEF"]
+	var punish_labels = ["PUNISH", "CORRECT", "IMPOSE CONSEQUENCE"]
+	
+	var right_subactions = ["END_CYCLE", "CHECK_STATUS"]
+	if profile.current_cycle >= 18 and profile.phase == SpecimenProfile.Phase.CHILD:
+		right_subactions = ["CERTIFY", "CHECK_STATUS"]
+		
+	return {
+		"TOP": {
+			"label": reinforce_labels[tier],
+			"subactions": ["COMFORT"]
+		},
+		"BOTTOM": {
+			"label": punish_labels[tier],
+			"subactions": ["SHOCK"]
+		},
+		"RIGHT": {
+			"label": "SYSTEM",
+			"subactions": right_subactions
+		}
+	}

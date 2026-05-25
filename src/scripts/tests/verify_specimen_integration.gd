@@ -2,7 +2,11 @@ extends Node
 
 const SC = preload("res://src/scripts/specimen/specimen_controller.gd")
 const RS = preload("res://src/scripts/conditioning/reinforcement_system.gd")
-const ND = preload("res://src/scripts/conditioning/neglect_decay.gd")
+const CM = preload("res://src/scripts/systems/cycle_manager.gd")
+
+const ApproachPlayerState = preload("res://src/scripts/specimen/states/approach_player_state.gd")
+const MirrorPlayerState = preload("res://src/scripts/specimen/states/mirror_player_state.gd")
+
 
 func _ready() -> void:
 	print("=== Specimen Integration & Morphology Verification ===")
@@ -75,25 +79,24 @@ func _ready() -> void:
 	rs.queue_free()
 	
 	# 8. Test Cycle progress and neglect decay integration
-	var nd = ND.new()
-	add_child(nd)
+	var cm = CM.new()
+	add_child(cm)
 	var prev_heat = env.heat
 	EnvironmentBridge.process_cycle_end(profile)
-	nd.apply_cycle_decay([])
+	cm.apply_cycle_decay([])
 	profile.current_cycle += 1
 	
 	assert(env.heat != prev_heat, "FAIL: Environmental drift was not applied at cycle end")
 	assert(profile.action_pool["VOCALIZE"] < 20.0, "FAIL: Neglect decay was not applied to unaddressed action")
 	print("[PASS] Cycle transition: drift and neglect decay integration")
-	nd.queue_free()
+	cm.queue_free()
 	
 	# 9. Verify Action Target Mapping
-	# Ensure get_target_position produces coordinates inside boundaries
+	# Ensure calculate_target produces coordinates inside boundaries
 	profile.phase = SpecimenProfile.Phase.CHILD
-	specimen.controller.active_action = "APPROACH_PLAYER"
-	var target_pos = specimen.controller.get_target_position("APPROACH_PLAYER", specimen.global_position, Vector3.ZERO, [])
-	assert(target_pos.x >= specimen.controller.CELL_MIN_X and target_pos.x <= specimen.controller.CELL_MAX_X, "FAIL: target X out of cell boundaries")
-	assert(target_pos.z >= specimen.controller.CELL_MIN_Z and target_pos.z <= specimen.controller.CELL_MAX_Z, "FAIL: target Z out of cell boundaries")
+	var target_pos = ApproachPlayerState.calculate_target(specimen.global_position, Vector3.ZERO, Specimen.CELL_MIN_X, Specimen.CELL_MAX_X, Specimen.CELL_MIN_Z, Specimen.CELL_MAX_Z)
+	assert(target_pos.x >= Specimen.CELL_MIN_X and target_pos.x <= Specimen.CELL_MAX_X, "FAIL: target X out of cell boundaries")
+	assert(target_pos.z >= Specimen.CELL_MIN_Z and target_pos.z <= Specimen.CELL_MAX_Z, "FAIL: target Z out of cell boundaries")
 	print("[PASS] Action-to-target pathfinding boundary clamping")
 	
 	# 9b. Verify Target Caching (signal-driven, not per-frame)
@@ -104,8 +107,8 @@ func _ready() -> void:
 	assert(specimen._current_action == "PLAY", "FAIL: _current_action should be cached from signal")
 	var cached_target = specimen.nav_agent.target_position
 	# The target should be within cell boundaries
-	assert(cached_target.x >= specimen.controller.CELL_MIN_X and cached_target.x <= specimen.controller.CELL_MAX_X, "FAIL: cached target X out of bounds")
-	assert(cached_target.z >= specimen.controller.CELL_MIN_Z and cached_target.z <= specimen.controller.CELL_MAX_Z, "FAIL: cached target Z out of bounds")
+	assert(cached_target.x >= Specimen.CELL_MIN_X and cached_target.x <= Specimen.CELL_MAX_X, "FAIL: cached target X out of bounds")
+	assert(cached_target.z >= Specimen.CELL_MIN_Z and cached_target.z <= Specimen.CELL_MAX_Z, "FAIL: cached target Z out of bounds")
 	# Verify tracking timer is stopped for non-tracking actions
 	assert(specimen._tracking_timer.is_stopped(), "FAIL: tracking timer should be stopped for PLAY action")
 	print("[PASS] Signal-driven target caching and tracking timer control")
@@ -116,18 +119,18 @@ func _ready() -> void:
 	
 	# Scenario A: player moves closer to specimen (X: 20 -> 22, Z: -8 -> -6)
 	var p_pos_a = Vector3(22.0, 0.0, -6.0)
-	var target_a = specimen.controller.get_target_position("MIRROR_PLAYER", s_start, p_pos_a, [], p_start, s_start)
+	var target_a = MirrorPlayerState.calculate_target(s_start, p_pos_a, p_start, s_start, Specimen.CELL_MIN_X, Specimen.CELL_MAX_X, Specimen.CELL_MIN_Z, Specimen.CELL_MAX_Z)
 	assert(abs(target_a.x - 28.0) < 0.01, "FAIL: MIRROR_PLAYER reflected X should be 28.0, got: " + str(target_a.x))
 	assert(abs(target_a.z - (-14.0)) < 0.01, "FAIL: MIRROR_PLAYER reflected Z should be -14.0, got: " + str(target_a.z))
 	
 	# Scenario B: out-of-bounds reflection (should clamp)
 	var p_pos_b = Vector3(5.0, 0.0, 20.0)
-	var target_b = specimen.controller.get_target_position("MIRROR_PLAYER", s_start, p_pos_b, [], p_start, s_start)
-	assert(abs(target_b.x - specimen.controller.CELL_MAX_X) < 0.01, "FAIL: MIRROR_PLAYER reflected X should clamp to CELL_MAX_X")
-	assert(abs(target_b.z - specimen.controller.CELL_MIN_Z) < 0.01, "FAIL: MIRROR_PLAYER reflected Z should clamp to CELL_MIN_Z")
+	var target_b = MirrorPlayerState.calculate_target(s_start, p_pos_b, p_start, s_start, Specimen.CELL_MIN_X, Specimen.CELL_MAX_X, Specimen.CELL_MIN_Z, Specimen.CELL_MAX_Z)
+	assert(abs(target_b.x - Specimen.CELL_MAX_X) < 0.01, "FAIL: MIRROR_PLAYER reflected X should clamp to CELL_MAX_X")
+	assert(abs(target_b.z - Specimen.CELL_MIN_Z) < 0.01, "FAIL: MIRROR_PLAYER reflected Z should clamp to CELL_MIN_Z")
 	
 	# Scenario C: fallback if starts are omitted (should fallback to s_start using p_pos_a as start)
-	var target_c = specimen.controller.get_target_position("MIRROR_PLAYER", s_start, p_pos_a, [])
+	var target_c = MirrorPlayerState.calculate_target(s_start, p_pos_a, Vector3.ZERO, Vector3.ZERO, Specimen.CELL_MIN_X, Specimen.CELL_MAX_X, Specimen.CELL_MIN_Z, Specimen.CELL_MAX_Z)
 	assert(abs(target_c.x - s_start.x) < 0.01, "FAIL: MIRROR_PLAYER fallback X should match s_start")
 	assert(abs(target_c.z - s_start.z) < 0.01, "FAIL: MIRROR_PLAYER fallback Z should match s_start")
 	
@@ -138,6 +141,7 @@ func _ready() -> void:
 	print("[PASS] MIRROR_PLAYER midpoint reflection and fallback logic")
 	
 	# 10. Verify Morphology Transition Velocity and Visual Spin
+
 	var initial_rot_y = specimen.visuals.rotation.y
 	profile.morphology = SpecimenProfile.Morphology.SPHERE
 	specimen.update_morphology()
@@ -155,6 +159,32 @@ func _ready() -> void:
 	assert(specimen.visuals.rotation.y != initial_rot_y, "FAIL: visuals should rotate during transition")
 	print("[PASS] Morphology transition physics: velocity and Y-rotation spin")
 	
+	# 11. Verify Custom Interaction Prompt text with "Current Action"
+	# Case A: Default/No Action in EGG phase
+	var egg_specimen = specimen_scene.instantiate()
+	add_child(egg_specimen)
+	assert(egg_specimen.interactable != null, "FAIL: egg_specimen should have an interactable")
+	var prompt_data_egg = egg_specimen.interactable.get_interaction_prompt_data()
+	assert(prompt_data_egg.has("prompt_text_override"), "FAIL: prompt_data_egg should have prompt_text_override")
+	assert("Current Action: None" in prompt_data_egg["prompt_text_override"], "FAIL: Expected 'Current Action: None' in egg phase, got: " + prompt_data_egg["prompt_text_override"])
+	
+	# Case B: After action is performed (e.g. PLAY)
+	egg_specimen.hatch()
+	await get_tree().create_timer(1.2).timeout
+	egg_specimen._on_action_performed("PLAY")
+	var prompt_data_play = egg_specimen.interactable.get_interaction_prompt_data()
+	assert(prompt_data_play.has("prompt_text_override"), "FAIL: prompt_data_play should have prompt_text_override")
+	assert("Current Action: Play" in prompt_data_play["prompt_text_override"], "FAIL: Expected 'Current Action: Play', got: " + prompt_data_play["prompt_text_override"])
+	
+	# Case C: After sleep action (e.g. SLEEP_EARLY)
+	egg_specimen._on_action_performed("SLEEP_EARLY")
+	var prompt_data_sleep = egg_specimen.interactable.get_interaction_prompt_data()
+	assert(prompt_data_sleep.has("prompt_text_override"), "FAIL: prompt_data_sleep should have prompt_text_override")
+	assert("Current Action: Sleep Early" in prompt_data_sleep["prompt_text_override"], "FAIL: Expected 'Current Action: Sleep Early', got: " + prompt_data_sleep["prompt_text_override"])
+
+	egg_specimen.queue_free()
+	print("[PASS] Custom interaction prompt dynamically displays Current Action")
+
 	# Clean up
 	specimen.queue_free()
 	SpecimenBridge.end_run()

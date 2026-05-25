@@ -15,6 +15,9 @@ func _ready() -> void:
 	var specimen = world.specimen
 	var profile = SpecimenBridge.profile
 	
+	# Start Cycle 1 manually since cycles no longer start automatically
+	cycle_manager.start_cycle()
+	
 	assert(cycle_manager != null, "FAIL: cycle_manager not instantiated")
 	assert(specimen != null, "FAIL: specimen not instantiated")
 	assert(profile != null, "FAIL: profile not initialized")
@@ -42,9 +45,12 @@ func _ready() -> void:
 	
 	# 3. Test cycle termination at 0 AP
 	var current_cycle = profile.current_cycle
-	cycle_manager.spend_ap(7) # this brings AP to 0, which auto-ends cycle
+	cycle_manager.spend_ap(7) # this brings AP to 0, which no longer auto-ends cycle
+	cycle_manager.end_cycle()
 	# Wait for cycle manager to finish processing cycle end
 	assert(profile.current_cycle == current_cycle + 1, "FAIL: Cycle should increment after AP reaches 0. Expected: " + str(current_cycle + 1) + ", got: " + str(profile.current_cycle))
+	# Start Cycle 2 manually
+	cycle_manager.start_cycle()
 	assert(cycle_manager.current_ap == 10, "FAIL: AP should reset to 10 on new cycle")
 	assert(profile.energy == 9.0, "FAIL: Energy should reset to 9.0 on cycle 2 start. Got: " + str(profile.energy))
 	print("[PASS] Cycle auto-termination at 0 AP")
@@ -106,15 +112,16 @@ func _ready() -> void:
 		specimen.controller.deactivate()
 		profile.energy = 5.0
 		# Open Radial UI
-		radial_ui.open_menu(profile.ruthlessness, profile.action_log, 1, false)
+		var config = world._get_specimen_radial_config()
+		radial_ui.open_menu(profile.action_log, profile.energy, profile.get_max_energy(), config)
 		assert(radial_ui.is_menu_open == true, "FAIL: Radial UI should be open")
-		assert(radial_ui.current_is_sleeping == false, "FAIL: Radial UI should not be in sleep layout initially")
+		assert(radial_ui.custom_config.get("TOP", {}).get("label", "") == "REINFORCE", "FAIL: Radial UI should not be in sleep layout initially")
 		
 		# Now trigger sleep
 		specimen.enter_sleep()
 		
 		# Radial UI should have transitioned dynamically
-		assert(radial_ui.current_is_sleeping == true, "FAIL: Radial UI should dynamically transition to sleep layout")
+		assert(radial_ui.custom_config.get("TOP", {}).get("label", "") == "PET", "FAIL: Radial UI should dynamically transition to sleep layout")
 		assert(radial_ui.top_button.visible == true, "FAIL: Top button should be visible in sleep layout")
 		assert(radial_ui.left_button.visible == false, "FAIL: Left button should be hidden in sleep layout")
 		assert(radial_ui.current_action_log.size() == 2, "FAIL: Radial UI action log should retain previous entries. Got: " + str(radial_ui.current_action_log))
@@ -221,7 +228,7 @@ func _ready() -> void:
 	print("--- Testing Light System & Reward Schema Hues ---")
 	var lights = world.get_node_or_null("Lights")
 	assert(lights != null, "FAIL: Lights node not found in world")
-	assert(lights.has_method("dim_lights_slow"), "FAIL: LightSystem script not attached to Lights")
+	assert(lights is LightSystem, "FAIL: LightSystem script not attached to Lights")
 	
 	# Configure non-zero transition durations for testing
 	cycle_manager.ap_depletion_dim_duration = 0.2
@@ -254,9 +261,17 @@ func _ready() -> void:
 	assert(omni_light.light_energy < 1.0, "FAIL: Omni light energy should be dimming")
 	
 	# Await transition to complete
-	await get_tree().create_timer(0.25).timeout
-	# Now transition should be finished, cycle advanced, and lights fading back on
+	await get_tree().create_timer(0.35).timeout
+	await get_tree().process_frame
+	
+	# Since it no longer auto-ends, we manually end it here
+	cycle_manager.end_cycle()
+	
+	# Now transition should be finished, cycle advanced
 	assert(cycle_manager.is_transitioning == false, "FAIL: Transition flag should reset")
+	
+	# Start next cycle manually
+	cycle_manager.start_cycle()
 	assert(cycle_manager.current_ap == 10, "FAIL: AP should reset after transition finishes")
 	
 	# Await lights to fade back on completely

@@ -1,7 +1,7 @@
 extends Node
 
 const RS = preload("res://src/scripts/conditioning/reinforcement_system.gd")
-const ND = preload("res://src/scripts/conditioning/neglect_decay.gd")
+const CM = preload("res://src/scripts/systems/cycle_manager.gd")
 const SC = preload("res://src/scripts/specimen/specimen_controller.gd")
 
 func _ready() -> void:
@@ -32,16 +32,16 @@ func _test_reinforcement() -> void:
 func _test_neglect_decay() -> void:
 	SpecimenBridge.start_run()
 	var profile = SpecimenBridge.profile
-	var nd = ND.new()
-	add_child(nd)
+	var cm = CM.new()
+	add_child(cm)
 	profile.action_pool["VOCALIZE"] = 1.2
-	nd.apply_cycle_decay(["RETREAT"])
+	cm.apply_cycle_decay(["RETREAT"])
 	
 	assert(profile.action_pool["VOCALIZE"] == 1.0, "FAIL: VOCALIZE expected 1.0, got %s" % profile.action_pool["VOCALIZE"])
 	assert(profile.action_pool["RETREAT"] == 10.0, "FAIL: RETREAT expected 10.0")
 	print("[PASS] Neglect decay mechanics")
 	SpecimenBridge.end_run()
-	nd.queue_free()
+	cm.queue_free()
 
 func _test_specimen_controller() -> void:
 	SpecimenBridge.start_run()

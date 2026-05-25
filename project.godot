@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+InteractionBus="*res://src/scripts/global/interaction_bus.gd"
 TimeManager="*res://src/scripts/global/time_manager.gd"
 Settings="*res://src/scripts/global/settings.gd"
 Game="*res://src/scripts/global/game.gd"
@@ -128,3 +129,8 @@ rendering_device/driver.windows="d3d12"
 global_illumination/gi/use_half_resolution=true
 anti_aliasing/quality/msaa_3d=3
 anti_aliasing/screen_space_roughness_limiter/enabled=false
+
+[debug]
+
+settings/profiler/max_timestamp_query_elements=1024
+

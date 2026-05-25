@@ -6,14 +6,27 @@ class_name PlayerPickup
 
 signal carry_weight_changed(new_mass: float)
 
+# Custom Input Actions for Remapping
+const ACTION_PRIMARY_ACTION = "primary_action"
+const ACTION_THROW = "carry_throw" # can fall back to MOUSE_BUTTON_RIGHT check
+const ACTION_ZOOM_IN = "carry_zoom_in" # can fall back to MOUSE_BUTTON_WHEEL_UP check
+const ACTION_ZOOM_OUT = "carry_zoom_out" # can fall back to MOUSE_BUTTON_WHEEL_DOWN check
+
+# Throwing parameters and camera shake constants
+const THROW_SPEED_BOOST: float = 1.2
+const THROW_SHAKE_SCALING: float = 0.002
+const THROW_SHAKE_MIN: float = 0.015
+const THROW_SHAKE_MAX: float = 0.04
+const THROW_SHAKE_DURATION: float = 0.15
+
 ## The player interactor component used to find targets.
 @export var interactor: PlayerInteractor
 
 ## The camera node. Orientation and position are calculated relative to this.
 @export var camera_3d: Camera3D
 
-## [DEPRECATED] Marker node for hold position. Use camera_3d and default_hold_distance instead.
-@export var hold_position: Node3D
+## The associated player character.
+@export var character: Player
 
 ## How quickly the object tries to reach the hold position.
 ## Typical range: 50.0 (soft/elastic) to 300.0 (rigid/stiff).
@@ -75,56 +88,72 @@ signal carry_weight_changed(new_mass: float)
 ## Typical range: 0.0 (no droop) to 1.0 (fully hanging down).
 @export_range(0.0, 1.0, 0.05) var max_droop: float = 0.75
 
-@onready var character: Player = get_parent() as Player
-
 var held_body: RigidBody3D = null
 var current_pickup: Pickupable = null
 var hold_distance: float = 2.0
 var grab_offset: Vector3 = Vector3.ZERO
 var grab_relative_basis: Basis = Basis.IDENTITY
 
+var _decay_rate: float = 0.0
+
 func _ready() -> void:
+	# Disable physics processing until an object is carried
+	set_physics_process(false)
+	
+	if not character:
+		character = get_parent() as Player
+		
 	# Resolve camera node fallback dynamically
-	if not camera_3d:
-		if character and character.camera_3d:
-			camera_3d = character.camera_3d
-		elif hold_position:
-			camera_3d = hold_position.get_parent() as Camera3D
+	if not camera_3d and is_instance_valid(character):
+		camera_3d = character.camera_3d
 	
 	hold_distance = default_hold_distance
+	
+	# Precalculate tick-rate independent angular damping coefficient
+	_decay_rate = -Engine.physics_ticks_per_second * log(held_angular_damping)
+
+func _get_active_camera() -> Node3D:
+	if camera_3d:
+		return camera_3d
+	return self
+
+func _adjust_hold_distance(is_zoom_in: bool) -> void:
+	var direction = -1.0 if is_zoom_in else 1.0
+	if not scroll_up_brings_closer:
+		direction = -direction
+	hold_distance = clamp(hold_distance + direction * zoom_speed, min_hold_distance, max_hold_distance)
+	get_viewport().set_input_as_handled()
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not WindowManager.is_mouse_captured():
 		return
 		
-	if event.is_action_pressed("primary_action"):
+	if event.is_action_pressed(ACTION_PRIMARY_ACTION):
 		_try_pickup()
-	elif event.is_action_released("primary_action"):
+	elif event.is_action_released(ACTION_PRIMARY_ACTION):
 		_release()
 	elif event is InputEventMouseButton and event.pressed:
 		if held_body:
-			if event.button_index == MOUSE_BUTTON_RIGHT:
+			if event.button_index == MOUSE_BUTTON_RIGHT or event.is_action(ACTION_THROW):
 				_throw()
-			elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
-				if scroll_up_brings_closer:
-					hold_distance = clamp(hold_distance - zoom_speed, min_hold_distance, max_hold_distance)
-				else:
-					hold_distance = clamp(hold_distance + zoom_speed, min_hold_distance, max_hold_distance)
-				get_viewport().set_input_as_handled()
-			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				if scroll_up_brings_closer:
-					hold_distance = clamp(hold_distance + zoom_speed, min_hold_distance, max_hold_distance)
-				else:
-					hold_distance = clamp(hold_distance - zoom_speed, min_hold_distance, max_hold_distance)
-				get_viewport().set_input_as_handled()
+			elif event.button_index == MOUSE_BUTTON_WHEEL_UP or event.is_action(ACTION_ZOOM_IN):
+				_adjust_hold_distance(true)
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN or event.is_action(ACTION_ZOOM_OUT):
+				_adjust_hold_distance(false)
+	elif held_body:
+		if event.is_action_pressed(ACTION_THROW):
+			_throw()
+		elif event.is_action_pressed(ACTION_ZOOM_IN):
+			_adjust_hold_distance(true)
+		elif event.is_action_pressed(ACTION_ZOOM_OUT):
+			_adjust_hold_distance(false)
 
-func _physics_process(_delta: float) -> void:
-	if not held_body:
+func _physics_process(delta: float) -> void:
+	if not is_instance_valid(held_body):
+		_release()
 		return
 
-	var camera_node = camera_3d
-	if not camera_node:
-		camera_node = hold_position if hold_position else self
+	var camera_node = _get_active_camera()
 
 	# Calculate target position for the grab point in front of the camera
 	var target_pos = camera_node.global_position - camera_node.global_transform.basis.z * hold_distance
@@ -143,18 +172,16 @@ func _physics_process(_delta: float) -> void:
 		_release()
 		return
 
-	# Calculate linear spring-damper force pulling the center of mass to target center
-	# Use an effective mass floor of 1.0 kg for acceleration scaling (keeps lightweight items stable)
-	var effective_mass = max(held_body.mass, 1.0)
+	# Calculate linear spring-damper force scaled by mass for uniform responsiveness
 	var dir = target_center_pos - current_pos
 	var spring_force = dir * stiffness
 	var velocity = held_body.linear_velocity
 	var damping_force = velocity * damping
-	var total_force = (spring_force - damping_force) * (held_body.mass / effective_mass)
+	var total_force = (spring_force - damping_force) * held_body.mass
 
 	# Apply Dynamic Arm Strength Limit
 	var strength_limit = max_force
-	if character:
+	if is_instance_valid(character):
 		strength_limit = max_force * character.player_strength
 
 	if total_force.length() > strength_limit:
@@ -163,19 +190,7 @@ func _physics_process(_delta: float) -> void:
 	# Always apply force centrally to prevent any linear-vs-rotational physics engine jitter
 	held_body.apply_central_force(total_force)
 
-	# Get the actual computed inertia of the body
-	var body_inertia = _get_body_inertia(held_body)
-
-	# Inertia factor to keep angular acceleration stable for tiny items
-	var min_inertia = 0.1
-	var effective_inertia = Vector3(
-		max(body_inertia.x, min_inertia),
-		max(body_inertia.y, min_inertia),
-		max(body_inertia.z, min_inertia)
-	)
-
 	# Procedural Droop: Tilt the target orientation downwards based on mass and grab offset.
-	# This creates a stable, physics-safe hanging effect without torque feedback loops.
 	var droop_strength = clamp(held_body.mass * grab_offset.length() * droop_multiplier, 0.0, max_droop)
 	
 	# Calculate target basis from initial relative rotation to camera
@@ -192,7 +207,6 @@ func _physics_process(_delta: float) -> void:
 		target_basis = Basis(target_right, target_up, -target_forward)
 
 	# Wrist Alignment Torque (Quaternion PD Controller to keep it oriented with camera)
-	# Calculate the rotation difference: target = diff * current => diff = target * current.inverse
 	var rotation_difference: Basis = target_basis * held_body.global_transform.basis.inverse()
 	var error_quaternion: Quaternion = rotation_difference.get_rotation_quaternion().normalized()
 	
@@ -204,17 +218,12 @@ func _physics_process(_delta: float) -> void:
 		
 	var alignment_torque = axis * angle * torque_stiffness
 	var damping_torque = held_body.angular_velocity * torque_damping
-	var desired_torque = alignment_torque - damping_torque
-
-	# Transform the torque to local space to scale by the principal moments of inertia
-	var local_torque = held_body.global_transform.basis.inverse() * desired_torque
-	local_torque = local_torque * effective_inertia
 	
-	# Transform the computed torque back to global space
-	var total_torque = held_body.global_transform.basis * local_torque
+	# Scale torque by mass as a safe/stable approximation of inertia scaling
+	var total_torque = (alignment_torque - damping_torque) * held_body.mass
 
 	var torque_limit = max_torque
-	if character:
+	if is_instance_valid(character):
 		torque_limit = max_torque * character.player_strength
 
 	if total_torque.length() > torque_limit:
@@ -222,8 +231,9 @@ func _physics_process(_delta: float) -> void:
 
 	held_body.apply_torque(total_torque)
 
-	# Apply additional rotational damping (stabilizing)
-	held_body.angular_velocity *= held_angular_damping
+	# Frame-rate/Tick-rate independent angular velocity decay (stabilizes rotation)
+	# FIXME: architecture debt - directly modifying angular velocity bypasses physics engine solver
+	held_body.angular_velocity *= exp(-_decay_rate * delta)
 
 func _try_pickup() -> void:
 	if not interactor or not interactor.current_target:
@@ -232,18 +242,16 @@ func _try_pickup() -> void:
 	var target = interactor.current_target
 	var pickupable = _find_pickupable(target)
 	
-	if pickupable:
-		var limit = 50.0
-		if character:
+	if pickupable and is_instance_valid(pickupable.body):
+		var limit = Pickupable.DEFAULT_LIFT_STRENGTH
+		if is_instance_valid(character):
 			limit = character.get_lift_strength()
 			
 		if pickupable.can_pickup(limit):
 			held_body = pickupable.body
 			current_pickup = pickupable
 			
-			var camera_node = camera_3d
-			if not camera_node:
-				camera_node = hold_position if hold_position else self
+			var camera_node = _get_active_camera()
 				
 			# Calculate grab offset to ensure it pivots around the click point
 			var ray = interactor.raycast
@@ -259,7 +267,6 @@ func _try_pickup() -> void:
 				hold_distance = clamp(dist, min_hold_distance, max_hold_distance)
 			
 			# Setup physics state
-			held_body.gravity_scale = 1.0
 			held_body.sleeping = false
 			
 			# Save initial relative rotation to camera to prevent snapping
@@ -268,27 +275,42 @@ func _try_pickup() -> void:
 			grab_relative_basis = camera_basis.inverse() * body_basis
 
 			# Disable collisions with carrying character to avoid glitches
-			if character:
+			if is_instance_valid(character):
 				held_body.add_collision_exception_with(character)
+			
+			# Add held body to raycast exception to prevent it blocking interaction
+			if interactor and interactor.raycast:
+				interactor.raycast.add_exception(held_body)
 			
 			current_pickup.on_picked_up()
 			carry_weight_changed.emit(held_body.mass)
+			
+			# Enable physics process loop only while carrying
+			set_physics_process(true)
 		else:
 			# Straining shake feedback if player tried to lift something too heavy
-			if character and character.has_method("apply_camera_shake"):
+			if is_instance_valid(character) and character.has_method("apply_camera_shake"):
 				character.apply_camera_shake(0.04, 0.2)
 
 func _release() -> void:
-	if not held_body:
+	# Disable physics process loop immediately
+	set_physics_process(false)
+	
+	if not is_instance_valid(held_body):
+		held_body = null
+		current_pickup = null
+		carry_weight_changed.emit(0.0)
 		return
 	
-	held_body.gravity_scale = 1.0
-	
 	# Restore collision exception
-	if character:
+	if is_instance_valid(character):
 		held_body.remove_collision_exception_with(character)
 	
-	if current_pickup:
+	# Remove raycast exception
+	if interactor and interactor.raycast:
+		interactor.raycast.remove_exception(held_body)
+	
+	if is_instance_valid(current_pickup):
 		current_pickup.on_dropped()
 		
 	held_body = null
@@ -296,29 +318,26 @@ func _release() -> void:
 	carry_weight_changed.emit(0.0)
 
 func _throw() -> void:
-	if not held_body or not current_pickup:
+	if not is_instance_valid(held_body) or not is_instance_valid(current_pickup):
 		return
 		
 	var body_ref = held_body
 	var pickup_ref = current_pickup
 	
-	var camera_node = camera_3d
-	if not camera_node:
-		camera_node = hold_position if hold_position else self
-		
+	var camera_node = _get_active_camera()
 	var dir = -camera_node.global_transform.basis.z.normalized()
 	
 	# Calculate throw speed scaled by player strength and item mass
 	var strength = 1.0
-	if character:
+	if is_instance_valid(character):
 		strength = character.player_strength
 		
 	var base_force = pickup_ref.throw_force * strength
 	var mass_factor = max(body_ref.mass, 1.0)
-	var throw_speed = (base_force * 1.2) / sqrt(mass_factor)
+	var throw_speed = (base_force * THROW_SPEED_BOOST) / sqrt(mass_factor)
 	
 	# Inherit character movement velocity and add the throw velocity
-	var char_vel = character.velocity if character else Vector3.ZERO
+	var char_vel = character.velocity if is_instance_valid(character) else Vector3.ZERO
 	body_ref.linear_velocity = char_vel + dir * throw_speed
 	
 	# Give a subtle, mass-scaled rotation tumble
@@ -333,45 +352,13 @@ func _throw() -> void:
 	_release()
 	
 	# Throw physical kickback shake
-	if character and character.has_method("apply_camera_shake"):
-		var shake_strength = clamp(base_force * 0.002, 0.015, 0.04)
-		character.apply_camera_shake(shake_strength, 0.15)
+	if is_instance_valid(character) and character.has_method("apply_camera_shake"):
+		var shake_strength = clamp(base_force * THROW_SHAKE_SCALING, THROW_SHAKE_MIN, THROW_SHAKE_MAX)
+		character.apply_camera_shake(shake_strength, THROW_SHAKE_DURATION)
 
 func _find_pickupable(node: Node) -> Pickupable:
 	if not node:
 		return null
 	if node is Pickupable:
 		return node
-	if node is Interactable and node.denial_provider is Pickupable:
-		return node.denial_provider
-		
-	for child in node.get_children():
-		if child is Pickupable:
-			return child
-			
-	var parent = node.get_parent()
-	if not parent:
-		return null
-	
-	for child in parent.get_children():
-		if child is Pickupable:
-			return child
 	return null
-
-func _get_body_inertia(body: RigidBody3D) -> Vector3:
-	if not body:
-		return Vector3.ONE
-		
-	# If a manual override is set on the RigidBody3D, use it
-	if body.inertia != Vector3.ZERO:
-		return body.inertia
-		
-	# Query the physics direct state to get the auto-computed inertia diagonal
-	var state = PhysicsServer3D.body_get_direct_state(body.get_rid())
-	if state:
-		var inv_inertia = state.inverse_inertia
-		if inv_inertia.x > 0.0 and inv_inertia.y > 0.0 and inv_inertia.z > 0.0:
-			return Vector3(1.0 / inv_inertia.x, 1.0 / inv_inertia.y, 1.0 / inv_inertia.z)
-			
-	# Fallback: estimate inertia based on bounding shape and mass
-	return Vector3.ONE * body.mass

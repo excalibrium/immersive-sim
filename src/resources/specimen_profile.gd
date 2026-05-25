@@ -1,6 +1,9 @@
 extends Resource
 class_name SpecimenProfile
 
+const COHERENCE_TIER_LOW: float = 34.0
+const COHERENCE_TIER_HIGH: float = 67.0
+
 ## Biological runtime state of the specimen.
 ## Instantiated dynamically during a run and managed via SpecimenBridge.
 ## Never saved to disk as a shared .tres — instantiated in code only.
@@ -32,8 +35,7 @@ enum Morphology {
 @export var resonance_frequency: float = 0.0
 
 # --- Cycle Tracking ---
-var current_cycle: int = 1
-var current_phase: int = 1
+var current_cycle: int = 0
 
 # --- Action Pool ---
 # Dictionary of action_id : weight (float, floor 1.0)
@@ -57,10 +59,10 @@ var action_log: Array = []  # max 3 entries, most recent first
 # Increments on PUNISH, decrements on REINFORCE, clamps 0-100.
 # Drives UI label shifts only — does not directly write to behavioral variables.
 var ruthlessness: float = 0.0
-# Specimen energy level. Initialized to 7.0 as a safe default for Cycle 1 (matching 5 + current_cycle * 2 where current_cycle is 1)
+# Specimen energy level. Initialized to 6.0 as a safe default for Cycle 1 (matching 5 + current_cycle where current_cycle is 1)
 # to prevent immediate exhaustion penalty before CycleManager.start_cycle() executes.
-# Reset to 5.0 + current_cycle * 2.0 at each cycle start.
-var energy: float = 7.0
+# Reset to 5.0 + current_cycle at each cycle start.
+var energy: float = 6.0
 
 ## Initializes the profile with run-start plasticity.
 func initialize(plasticity_roll: float) -> void:
@@ -104,6 +106,10 @@ func get_total_weight() -> float:
 		total += w
 	return total
 
+## Returns the maximum specimen energy for the current cycle.
+func get_max_energy() -> float:
+	return 5.0 + float(current_cycle)
+
 ## Evaluates variable thresholds to determine the narrative ending.
 ## Should only be called once at Audit 5. Do not poll during Phase 1.
 func determine_ending() -> String:
@@ -111,23 +117,23 @@ func determine_ending() -> String:
 		return "Y_COHERENCE_CASCADE"
 	if resonance_frequency >= 95.0:
 		return "X_CONTAMINATION"
-	if neural_plasticity >= 67.0 and _is_mid(threat_indexing) and _is_mid(identity_coherence):
+	if neural_plasticity >= COHERENCE_TIER_HIGH and _is_mid(threat_indexing) and _is_mid(identity_coherence):
 		return "E_NULL"
 	
-	if threat_indexing >= 67.0 and identity_coherence >= 67.0:
+	if threat_indexing >= COHERENCE_TIER_HIGH and identity_coherence >= COHERENCE_TIER_HIGH:
 		var base = "A2_TRANSACTIONAL" if reward_schema >= -17.0 else "A1_SYSTEMATIC"
-		return base + ("_RESONANT" if resonance_frequency >= 67.0 else "")
+		return base + ("_RESONANT" if resonance_frequency >= COHERENCE_TIER_HIGH else "")
 	
-	if threat_indexing >= 67.0 and identity_coherence < 34.0:
-		return "B1_ECHO" if resonance_frequency >= 67.0 else "B2_STATIC"
+	if threat_indexing >= COHERENCE_TIER_HIGH and identity_coherence < COHERENCE_TIER_LOW:
+		return "B1_ECHO" if resonance_frequency >= COHERENCE_TIER_HIGH else "B2_STATIC"
 	
-	if threat_indexing < 34.0 and identity_coherence >= 67.0:
+	if threat_indexing < COHERENCE_TIER_LOW and identity_coherence >= COHERENCE_TIER_HIGH:
 		return "C1_DEPARTURE" if reward_schema > 17.0 else "C2_DISPLACEMENT"
 	
-	if _is_mid(threat_indexing) and identity_coherence < 34.0 and resonance_frequency >= 67.0:
+	if _is_mid(threat_indexing) and identity_coherence < COHERENCE_TIER_LOW and resonance_frequency >= COHERENCE_TIER_HIGH:
 		return "D1_ATTACHMENT" if reward_schema > 17.0 else "D2_HOSTAGE"
 	
 	return "E_NULL"
 
 func _is_mid(value: float) -> bool:
-	return value >= 34.0 and value < 67.0
+	return value >= COHERENCE_TIER_LOW and value < COHERENCE_TIER_HIGH

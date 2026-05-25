@@ -13,7 +13,7 @@ func _ready() -> void:
 	assert(profile != null, "FAIL: SpecimenBridge.profile not initialized")
 	
 	# 2. Instantiate RadialUI
-	var radial = RadialScene.instantiate()
+	var radial: InteractionRadial = RadialScene.instantiate() as InteractionRadial
 	add_child(radial)
 	
 	# 3. Assert Defaults
@@ -26,7 +26,13 @@ func _ready() -> void:
 	print("[PASS] Initial defaults and node references")
 	
 	# 4. Open Menu in EGG Phase (0) and verify visibility
-	radial.open_menu(profile.ruthlessness, profile.action_log, 0)
+	var egg_config = {
+		"RIGHT": {
+			"label": "SYSTEM",
+			"subactions": ["END_CYCLE", "CHECK_STATUS"]
+		}
+	}
+	radial.open_menu(profile.action_log, profile.energy, profile.get_max_energy(), egg_config)
 	assert(radial.visible == true, "FAIL: RadialUI should be visible after open_menu")
 	assert(radial.is_menu_open == true, "FAIL: is_menu_open should be true")
 	assert(WindowManager.is_mouse_captured() == false, "FAIL: Mouse should be visible when menu is open")
@@ -40,7 +46,23 @@ func _ready() -> void:
 	
 	# 5. Open Menu in CHILD Phase (1) and verify visibility
 	radial.close_menu()
-	radial.open_menu(profile.ruthlessness, profile.action_log, 1)
+	var child_config = {
+		"TOP": {
+			"label": "REINFORCE",
+			"subactions": ["COMFORT"]
+		},
+		"BOTTOM": {
+			"label": "PUNISH",
+			"subactions": ["SHOCK"]
+		},
+		"RIGHT": {
+			"label": "SYSTEM",
+			"subactions": ["END_CYCLE", "CHECK_STATUS"]
+		}
+	}
+	radial.open_menu(profile.action_log, profile.energy, profile.get_max_energy(), child_config, "PLAY")
+	assert(radial.current_action_name == "PLAY", "FAIL: Expected current_action_name to be 'PLAY'")
+	assert(radial.current_action_label.text == "CURRENT ACTION: Play", "FAIL: Current action label incorrect after open_menu, got: " + radial.current_action_label.text)
 	assert(radial.top_button.visible == true, "FAIL: TOP button should be visible in future phases")
 	assert(radial.bottom_button.visible == true, "FAIL: BOTTOM button should be visible in future phases")
 	assert(radial.left_button.visible == false, "FAIL: LEFT button should be hidden in future phases")
@@ -55,38 +77,26 @@ func _ready() -> void:
 	
 	# 7. Verify ruthlessness shifting text
 	# Tier 0 (0-33): Reinforce / Punish
-	profile.ruthlessness = 10.0
-	radial.current_ruthlessness = profile.ruthlessness
-	radial._refresh_labels()
-	assert(radial.top_button.get_node("Label").text == "REINFORCE", "FAIL: Expected 'REINFORCE'")
-	assert(radial.bottom_button.get_node("Label").text == "PUNISH", "FAIL: Expected 'PUNISH'")
-	
-	# Tier 1 (34-66): Reward / Correct
-	profile.ruthlessness = 45.0
-	radial.current_ruthlessness = profile.ruthlessness
-	radial._refresh_labels()
-	assert(radial.top_button.get_node("Label").text == "REWARD", "FAIL: Expected 'REWARD'")
-	assert(radial.bottom_button.get_node("Label").text == "CORRECT", "FAIL: Expected 'CORRECT'")
-	
 	# Tier 2 (67-100): Grant Relief / Impose Consequence
-	profile.ruthlessness = 80.0
-	radial.current_ruthlessness = profile.ruthlessness
-	radial._refresh_labels()
-	assert(radial.top_button.get_node("Label").text == "GRANT RELIEF", "FAIL: Expected 'GRANT RELIEF'")
-	assert(radial.bottom_button.get_node("Label").text == "IMPOSE CONSEQUENCE", "FAIL: Expected 'IMPOSE CONSEQUENCE'")
+	radial.top_label.text = "GRANT RELIEF"
+	radial.bottom_label.text = "IMPOSE CONSEQUENCE"
+	assert(radial.top_label.text == "GRANT RELIEF", "FAIL: Expected 'GRANT RELIEF'")
+	assert(radial.bottom_label.text == "IMPOSE CONSEQUENCE", "FAIL: Expected 'IMPOSE CONSEQUENCE'")
 	print("[PASS] Ruthlessness-based label shift")
 	
 	# 8. Verify action log formatting in center
 	profile.action_log = ["APPROACH_PLAYER", "VOCALIZE", "PLAY"]
 	radial.current_action_log = profile.action_log
+	radial.current_action_name = "APPROACH_PLAYER"
 	radial._refresh_log()
 	assert(radial.log_container != null, "FAIL: LogContainer should be instantiated")
-	assert(radial.log_container.get_child_count() == 6, "FAIL: LogContainer should have a header + 3 items + spacer + energy, got: " + str(radial.log_container.get_child_count()))
+	assert(radial.log_container.get_child_count() == 7, "FAIL: LogContainer should have current_action + header + 3 items + spacer + energy, got: " + str(radial.log_container.get_child_count()))
+	assert(radial.current_action_label.text == "CURRENT ACTION: Approach Player", "FAIL: Current action label incorrect, got: " + radial.current_action_label.text)
 	
 	# Header is index 0
-	var item1 = radial.log_container.get_child(1) as Label
-	var item2 = radial.log_container.get_child(2) as Label
-	var item3 = radial.log_container.get_child(3) as Label
+	var item1 = radial.action_labels[0]
+	var item2 = radial.action_labels[1]
+	var item3 = radial.action_labels[2]
 	
 	assert(item1.text == "Approach Player", "FAIL: Expected 'Approach Player', got: " + item1.text)
 	assert(item2.text == "Vocalize", "FAIL: Expected 'Vocalize', got: " + item2.text)
@@ -151,14 +161,24 @@ func _ready() -> void:
 	
 	# 12. Verify Sleep Layout and direct clicks
 	# Open menu in sleep state
-	radial.open_menu(profile.ruthlessness, profile.action_log, 1, true)
+	var sleep_config = {
+		"TOP": {
+			"label": "PET",
+			"action": "PET"
+		},
+		"BOTTOM": {
+			"label": "SHOCK",
+			"action": "SHOCK"
+		}
+	}
+	radial.open_menu(profile.action_log, profile.energy, profile.get_max_energy(), sleep_config)
 	assert(radial.top_button.visible == true, "FAIL: TOP button should be visible in sleep")
 	assert(radial.bottom_button.visible == true, "FAIL: BOTTOM button should be visible in sleep")
 	assert(radial.left_button.visible == false, "FAIL: LEFT button should be hidden in sleep")
 	assert(radial.right_button.visible == false, "FAIL: RIGHT button should be hidden in sleep")
 	
-	assert(radial.top_button.get_node("Label").text == "PET", "FAIL: Expected 'PET' during sleep, got: " + radial.top_button.get_node("Label").text)
-	assert(radial.bottom_button.get_node("Label").text == "SHOCK", "FAIL: Expected 'SHOCK' during sleep, got: " + radial.bottom_button.get_node("Label").text)
+	assert(radial.top_label.text == "PET", "FAIL: Expected 'PET' during sleep, got: " + radial.top_label.text)
+	assert(radial.bottom_label.text == "SHOCK", "FAIL: Expected 'SHOCK' during sleep, got: " + radial.bottom_label.text)
 	
 	var click_state = { "clicked_pet": false }
 	radial.subaction_selected.connect(func(category, action):
@@ -174,7 +194,21 @@ func _ready() -> void:
 	# 13. Verify CERTIFY option at Cycle 18
 	profile.current_cycle = 18
 	# Open menu for CHILD phase (1)
-	radial.open_menu(profile.ruthlessness, profile.action_log, 1, false)
+	var certify_config = {
+		"TOP": {
+			"label": "REINFORCE",
+			"subactions": ["COMFORT"]
+		},
+		"BOTTOM": {
+			"label": "PUNISH",
+			"subactions": ["SHOCK"]
+		},
+		"RIGHT": {
+			"label": "SYSTEM",
+			"subactions": ["CERTIFY", "CHECK_STATUS"]
+		}
+	}
+	radial.open_menu(profile.action_log, profile.energy, profile.get_max_energy(), certify_config)
 	radial._on_primary_hovered("RIGHT")
 	await get_tree().create_timer(0.5).timeout
 	
@@ -189,11 +223,33 @@ func _ready() -> void:
 	
 	# 14. Verify Real-time update method
 	profile.action_log = ["PLAY", "VOCALIZE", "APPROACH_PLAYER"]
-	radial.update_realtime_data(profile.action_log)
+	radial.update_realtime_data(profile.action_log, profile.energy, profile.get_max_energy(), {}, "VOCALIZE")
 	# Assert that the new log is formatted and displayed
-	var updated_item1 = radial.log_container.get_child(1) as Label
+	var updated_item1 = radial.action_labels[0]
 	assert(updated_item1.text == "Play", "FAIL: Expected updated action 'Play', got: " + updated_item1.text)
+	assert(radial.current_action_label.text == "CURRENT ACTION: Vocalize", "FAIL: Expected CURRENT ACTION: Vocalize, got: " + radial.current_action_label.text)
 	print("[PASS] Real-time log updating via update_realtime_data")
+	
+	# 15. Verify center_override data-driven formatting (Bed layout)
+	var bed_center_override = {
+		"header": "REST MODULE",
+		"current_action": "CYCLE: 12",
+		"lines": [
+			"STATUS: LOCKED",
+			"Warning: Specimen is active!",
+			"Specimen must be sleeping."
+		],
+		"energy": ""
+	}
+	radial.open_menu([], 0.0, 0.0, {"RIGHT": {"label": "LOCKED", "action": "LOCKED"}}, "", bed_center_override)
+	assert(radial.log_container.get_node("Header").text == "REST MODULE", "FAIL: Expected Header to be 'REST MODULE'")
+	assert(radial.current_action_label.text == "CYCLE: 12", "FAIL: Expected current action to be 'CYCLE: 12'")
+	assert(radial.action_labels[0].text == "STATUS: LOCKED", "FAIL: Expected line 0 to be 'STATUS: LOCKED'")
+	assert(radial.action_labels[1].text == "Warning: Specimen is active!", "FAIL: Expected line 1 to be 'Warning: Specimen is active!'")
+	assert(radial.action_labels[2].text == "Specimen must be sleeping.", "FAIL: Expected line 2 to be 'Specimen must be sleeping.'")
+	assert(radial.energy_label.visible == false, "FAIL: Energy label should be hidden when empty")
+	radial.close_menu()
+	print("[PASS] custom center log override formatting")
 
 	# Clean up
 	radial.queue_free()

@@ -5,6 +5,16 @@
 [ext_resource type="Material" uid="uid://vynwu0jc3ysc" path="res://src/assets/models/level/materials/Material.001.tres" id="3_80iqt"]
 [ext_resource type="Script" uid="uid://crgd3640b2fns" path="res://src/scripts/components/interactable.gd" id="4_interact"]
 [ext_resource type="Script" uid="uid://dcmg76oekxj3v" path="res://src/scripts/specimen/specimen_audio.gd" id="5_audio"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/specimen_state_machine.gd" id="6_sm"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/approach_player_state.gd" id="7_approach"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/retreat_state.gd" id="8_retreat"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/tell_state.gd" id="9_tell"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/investigate_state.gd" id="10_investigate"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/play_state.gd" id="11_play"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/waste_behavior_state.gd" id="12_waste"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/sleep_state.gd" id="13_sleep"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/mirror_player_state.gd" id="14_mirror"]
+[ext_resource type="Script" path="res://src/scripts/specimen/states/refuse_interaction_state.gd" id="15_refuse"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 
@@ -76,3 +86,54 @@ mesh = SubResource("ArrayMesh_e06p7")
 [node name="Interactable" type="Node3D" parent="." unique_id=98765412]
 script = ExtResource("4_interact")
 interact_text_key = "INTERACT_CONDITION_SPECIMEN"
+
+[node name="SpecimenStateMachine" type="Node" parent="." unique_id=900000000]
+script = ExtResource("6_sm")
+
+[node name="ApproachPlayerState" type="Node" parent="SpecimenStateMachine" unique_id=900000001]
+script = ExtResource("7_approach")
+action_type = 0
+
+[node name="RetreatState" type="Node" parent="SpecimenStateMachine" unique_id=900000002]
+script = ExtResource("8_retreat")
+action_type = 1
+
+[node name="VocalizeState" type="Node" parent="SpecimenStateMachine" unique_id=900000003]
+script = ExtResource("9_tell")
+action_type = 2
+tell_type = 0
+
+[node name="InvestigateState" type="Node" parent="SpecimenStateMachine" unique_id=900000004]
+script = ExtResource("10_investigate")
+action_type = 3
+
+[node name="DisplayState" type="Node" parent="SpecimenStateMachine" unique_id=900000005]
+script = ExtResource("9_tell")
+action_type = 4
+tell_type = 1
+
+[node name="PlayState" type="Node" parent="SpecimenStateMachine" unique_id=900000006]
+script = ExtResource("11_play")
+action_type = 5
+
+[node name="WasteBehaviorState" type="Node" parent="SpecimenStateMachine" unique_id=900000007]
+script = ExtResource("12_waste")
+action_type = 6
+
+[node name="SleepEarlyState" type="Node" parent="SpecimenStateMachine" unique_id=900000008]
+script = ExtResource("13_sleep")
+action_type = 7
+sleep_location_type = 1
+
+[node name="MirrorPlayerState" type="Node" parent="SpecimenStateMachine" unique_id=900000009]
+script = ExtResource("14_mirror")
+action_type = 8
+
+[node name="RefuseInteractionState" type="Node" parent="SpecimenStateMachine" unique_id=900000010]
+script = ExtResource("15_refuse")
+action_type = 9
+
+[node name="SleepState" type="Node" parent="SpecimenStateMachine" unique_id=900000011]
+script = ExtResource("13_sleep")
+action_type = 10
+sleep_location_type = 0

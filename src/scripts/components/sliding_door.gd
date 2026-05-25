@@ -19,7 +19,9 @@ func toggle():
 	super.toggle()
 	target_position = base_position + open_offset if is_open else base_position
 
-func _apply_animation(delta: float):
+func _apply_animation(delta: float) -> bool:
 	var parent = get_parent() as Node3D
 	if parent:
 		parent.position = parent.position.move_toward(target_position, delta * animation_speed)
+		return parent.position.is_equal_approx(target_position)
+	return true

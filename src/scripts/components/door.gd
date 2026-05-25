@@ -10,7 +10,10 @@ func toggle():
 	super.toggle() # Handle base state and signal
 	target_rotation = open_rotation if is_open else 0.0
  
-func _apply_animation(delta: float):
+func _apply_animation(delta: float) -> bool:
 	var parent = get_parent() as Node3D
 	if parent:
-		parent.rotation.y = rotate_toward(parent.rotation.y, deg_to_rad(target_rotation), delta * animation_speed)
+		var target_rad = deg_to_rad(target_rotation)
+		parent.rotation.y = rotate_toward(parent.rotation.y, target_rad, delta * animation_speed)
+		return is_equal_approx(parent.rotation.y, target_rad)
+	return true

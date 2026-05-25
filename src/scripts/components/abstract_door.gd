@@ -15,25 +15,29 @@ signal locked_interact_attempted
 var is_open: bool = false
 
 func _ready():
+	set_process(false)
 	# (Rule 38): Never assume a sibling is ready. 
 	# Await a frame to ensure @export dependencies are fully initialized.
 	await get_tree().process_frame
 	
 	if not interactable:
 		# Fallback to parent if not assigned
-		interactable = get_parent() as Interactable
+		if is_instance_valid(get_parent()):
+			interactable = get_parent() as Interactable
 	
-	if interactable:
+	if is_instance_valid(interactable):
 		interactable.interacted.connect(_on_interacted)
 		interactable.get_denied_status = _check_if_denied
 		_update_interact_text()
 
 func _process(delta: float):
-	_apply_animation(delta)
+	if _apply_animation(delta):
+		set_process(false)
 
 ## Virtual method: Must be overridden by subclasses.
-func _apply_animation(_delta: float):
+func _apply_animation(_delta: float) -> bool:
 	push_error("AbstractDoor: _apply_animation() not implemented in subclass: ", name)
+	return true
 
 func _check_if_denied(_by_whom: Node = null) -> bool:
 	if is_locked and required_item_id != "" and Game.inventory:
@@ -57,7 +61,8 @@ func toggle():
 	is_open = !is_open
 	state_changed.emit(is_open)
 	print("DOOR_TOGGLED: ", "OPEN" if is_open else "CLOSED")
+	set_process(true)
 
 func _update_interact_text():
-	if interactable:
+	if is_instance_valid(interactable):
 		interactable.interact_text_key = "INTERACT_DOOR_UNLOCK" if is_locked else "INTERACT_DOOR_USE"

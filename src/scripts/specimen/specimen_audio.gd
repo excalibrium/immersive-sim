@@ -24,9 +24,9 @@ extends AudioStreamPlayer3D
 ## Plays a vocalization audio stream from the appropriate pool based on identity coherence.
 func play_vocalize(identity_coherence: float) -> void:
 	var pool: Array[AudioStream] = []
-	if identity_coherence < 34.0:
+	if identity_coherence < SpecimenProfile.COHERENCE_TIER_LOW:
 		pool = vocalize_incoherent
-	elif identity_coherence < 67.0:
+	elif identity_coherence < SpecimenProfile.COHERENCE_TIER_HIGH:
 		pool = vocalize_sentence
 	else:
 		pool = vocalize_complex

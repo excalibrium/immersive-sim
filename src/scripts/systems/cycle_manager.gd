@@ -10,93 +10,107 @@ signal phase_transitioned(new_phase: int)
 @export var ap_depletion_dim_duration: float = 3.0
 @export var start_cycle_fade_duration: float = 2.0
 
+const DECAY_RATE = 0.5
+const WEIGHT_FLOOR = 1.0
+
 var current_ap: int = 10
 var addressed_actions: Array = []
 var individuation_boost_total: float = 0.0 # Capped at 15.0
 var is_transitioning: bool = false
+var is_cycle_active: bool = false
 
-@onready var world = get_parent()
-
-var neglect_decay: NeglectDecay = null
-var reinforcement_system: ReinforcementSystem = null
-var specimen: Specimen = null
-
-func _ready() -> void:
-	# Find core systems dynamically from parent world node (Rule 11)
-	neglect_decay = world.find_child("NeglectDecay") as NeglectDecay
-	reinforcement_system = world.find_child("ReinforcementSystem") as ReinforcementSystem
-	specimen = world.find_child("Specimen") as Specimen
-	
-	# Initial cycle startup
-	start_cycle()
+## external_specimen: Specimen sibling node. Assigned in inspector.
+@export var external_specimen: Specimen
+## external_lights: LightSystem sibling node. Assigned in inspector.
+@export var external_lights: LightSystem
 
 func start_cycle() -> void:
 	current_ap = 10
 	addressed_actions.clear()
 	is_transitioning = false
+	is_cycle_active = true
 	
 	var profile = SpecimenBridge.profile
 	if profile:
-		# Specimen energy: 5 + current_cycle * 2 (Rule 18 / Runtime state)
-		profile.energy = 5.0 + float(profile.current_cycle) * 2.0
+		if profile.current_cycle == 0:
+			profile.current_cycle = 1
+		# Specimen energy: get_max_energy() (Rule 18 / Runtime state)
+		profile.energy = profile.get_max_energy()
 		print("CycleManager: Started Cycle ", profile.current_cycle, " | AP: ", current_ap, " | Energy: ", profile.energy)
 		
 		# Auto-hatch at Cycle 5 if still EGG
 		if profile.current_cycle >= 5 and profile.phase == SpecimenProfile.Phase.EGG:
-			if specimen:
-				specimen.hatch()
+			if is_instance_valid(external_specimen):
+				external_specimen.hatch()
 				phase_transitioned.emit(SpecimenProfile.Phase.CHILD)
 				
 	ap_changed.emit(current_ap)
 	cycle_started.emit(profile.current_cycle if profile else 1)
 	
 	# Fade lights on for the start of the cycle
-	var lights = world.get_node_or_null("Lights")
-	if lights and lights.has_method("fade_lights_on") and lights.has_method("update_hue_from_reward"):
+	if is_instance_valid(external_lights):
 		if profile:
-			lights.update_hue_from_reward(profile.reward_schema, 0.0) # Snap hue instantly
-		lights.fade_lights_on(start_cycle_fade_duration)
+			external_lights.update_hue_from_reward(profile.reward_schema, 0.0) # Snap hue instantly
+		external_lights.fade_lights_on(start_cycle_fade_duration)
 
-func spend_ap(amount: int) -> void:
-	current_ap = max(current_ap - amount, 0)
+func spend_ap(amount: int) -> bool:
+	if current_ap < amount:
+		print("CycleManager: Not enough AP! Required: ", amount, " | Available: ", current_ap)
+		return false
+	current_ap -= amount
 	ap_changed.emit(current_ap)
 	print("CycleManager: Spent ", amount, " AP | Remaining: ", current_ap)
 	
 	if current_ap == 0 and not is_transitioning:
 		_trigger_depleted_ap_transition()
+	return true
 
 func _trigger_depleted_ap_transition() -> void:
 	is_transitioning = true
 	print("CycleManager: AP depleted to 0. Initiating slow light dimming...")
 	
-	var lights = world.get_node_or_null("Lights")
-	if lights and lights.has_method("dim_lights_slow") and ap_depletion_dim_duration > 0.0:
-		var tween = lights.dim_lights_slow(ap_depletion_dim_duration)
+	if is_instance_valid(external_lights) and ap_depletion_dim_duration > 0.0:
+		var tween = external_lights.dim_lights_slow(ap_depletion_dim_duration)
 		if tween:
 			await tween.finished
 	else:
-		if lights and lights.has_method("snap_lights_out"):
-			lights.snap_lights_out()
+		if is_instance_valid(external_lights):
+			external_lights.snap_lights_out()
 			
-	end_cycle()
+	is_transitioning = false
+
+func apply_cycle_decay(addressed: Array) -> void:
+	var profile = SpecimenBridge.profile
+	if not profile:
+		return
+	for action_id in profile.action_pool:
+		if action_id not in addressed:
+			var current = profile.action_pool[action_id]
+			profile.action_pool[action_id] = max(
+				current - DECAY_RATE, WEIGHT_FLOOR
+			)
 
 func end_cycle() -> void:
+	if not is_cycle_active:
+		return
+	is_cycle_active = false
+	current_ap = 0
+	ap_changed.emit(0)
+	is_transitioning = false
 	var profile = SpecimenBridge.profile
 	if not profile:
 		return
 		
 	print("CycleManager: Ending Cycle ", profile.current_cycle)
 	
-	var lights = world.get_node_or_null("Lights")
-	if lights and lights.has_method("snap_lights_out") and lights.has_method("is_lights_dimmed"):
-		if not lights.is_lights_dimmed():
-			lights.snap_lights_out()
+	if is_instance_valid(external_lights):
+		if not external_lights.is_lights_dimmed():
+			external_lights.snap_lights_out()
 			
 	cycle_ended.emit(profile.current_cycle)
 	
 	# 1. Neglect decay
-	if neglect_decay:
-		neglect_decay.apply_cycle_decay(addressed_actions)
+	apply_cycle_decay(addressed_actions)
 		
 	# 2. Environment drift and consequences
 	EnvironmentBridge.process_cycle_end(profile)
@@ -116,20 +130,17 @@ func end_cycle() -> void:
 			print("CycleManager: Individuation boost applied. Cumulative boost: ", individuation_boost_total, "/15.0")
 
 	# If specimen is sleeping, wake it naturally at cycle end
-	if specimen and specimen.is_sleeping:
-		specimen.wake_up()
-
+	if is_instance_valid(external_specimen) and external_specimen.is_sleeping:
+		external_specimen.wake_up()
+ 
 	# 4. Cycle counter increment
 	profile.current_cycle += 1
 	
 	# 5. Phase transition check
 	if profile.current_cycle >= 5 and profile.phase == SpecimenProfile.Phase.EGG:
-		if specimen:
-			specimen.hatch()
+		if is_instance_valid(external_specimen):
+			external_specimen.hatch()
 			phase_transitioned.emit(SpecimenProfile.Phase.CHILD)
-			
-	# Start next cycle
-	start_cycle()
 
 ## Triggers the non-skippable CERTIFY sequence to progress to ADULT phase.
 func trigger_certify_sequence() -> void:
@@ -142,19 +153,22 @@ func trigger_certify_sequence() -> void:
 	ap_changed.emit(0)
 	
 	# 1. Visual egg revert
-	if specimen:
-		specimen.controller.action_timer.stop()
-		specimen.is_sleeping = false
-		specimen.velocity = Vector3.ZERO
+	if is_instance_valid(external_specimen):
+		if is_instance_valid(external_specimen.controller) and is_instance_valid(external_specimen.controller.action_timer):
+			external_specimen.controller.action_timer.stop()
+		external_specimen.is_sleeping = false
+		external_specimen.velocity = Vector3.ZERO
 		
 		# Return visuals to egg state
-		specimen.visuals.visible = false
-		specimen.egg.visible = true
-		specimen.egg.scale = specimen.base_egg_scale
-		if specimen.egg_material:
-			specimen.egg_material.emission_energy_multiplier = 0.5
-			specimen.egg_material.albedo_color = Color(0.9, 0.9, 0.95)
-			specimen.egg_material.emission = Color(0.1, 0.15, 0.2)
+		if is_instance_valid(external_specimen.visuals):
+			external_specimen.visuals.visible = false
+		if is_instance_valid(external_specimen.egg):
+			external_specimen.egg.visible = true
+			external_specimen.egg.scale = external_specimen.base_egg_scale
+		if external_specimen.egg_material:
+			external_specimen.egg_material.emission_energy_multiplier = 0.5
+			external_specimen.egg_material.albedo_color = Color(0.9, 0.9, 0.95)
+			external_specimen.egg_material.emission = Color(0.1, 0.15, 0.2)
 			
 	# 2. Spawn clinical-to-emotional translation overlay (non-skippable)
 	var canvas = CanvasLayer.new()
@@ -225,23 +239,25 @@ func trigger_certify_sequence() -> void:
 	anim_tween.chain().tween_callback(func():
 		print("CycleManager: Translation complete. Cracking egg...")
 		# Shake visual revert
-		if specimen:
+		if is_instance_valid(external_specimen):
 			# Shake
 			var shake = create_tween().set_loops(4)
-			shake.tween_property(specimen.egg, "rotation:z", 0.15, 0.06)
-			shake.tween_property(specimen.egg, "rotation:z", -0.15, 0.06)
+			shake.tween_property(external_specimen.egg, "rotation:z", 0.15, 0.06)
+			shake.tween_property(external_specimen.egg, "rotation:z", -0.15, 0.06)
 			
 			# Crack scale-down / visuals reveal
 			var crack = create_tween().set_parallel(true)
-			crack.tween_property(specimen.egg, "scale", Vector3.ZERO, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-			specimen.visuals.visible = true
-			specimen.visuals.scale = Vector3.ZERO
-			crack.tween_property(specimen.visuals, "scale", Vector3.ONE * 1.5, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+			crack.tween_property(external_specimen.egg, "scale", Vector3.ZERO, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+			external_specimen.visuals.visible = true
+			external_specimen.visuals.scale = Vector3.ZERO
+			crack.tween_property(external_specimen.visuals, "scale", Vector3.ONE * 1.5, 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 			
 			crack.chain().tween_callback(func():
-				specimen.egg.visible = false
+				if is_instance_valid(external_specimen):
+					external_specimen.egg.visible = false
+					if is_instance_valid(external_specimen.controller):
+						external_specimen.controller.activate()
 				profile.phase = SpecimenProfile.Phase.ADULT
-				specimen.controller.activate()
 				phase_transitioned.emit(SpecimenProfile.Phase.ADULT)
 				print("CycleManager: Specimen has emerged into an ADULT! Phase 2 begins.")
 				canvas.queue_free()

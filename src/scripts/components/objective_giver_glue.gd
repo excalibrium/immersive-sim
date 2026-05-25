@@ -1,22 +1,17 @@
-extends Node
+extends ObjectiveGiver
 class_name ObjectiveGiverGlue
 
 ## Glue Layer Component.
 ## Connects ObjectiveGiver (Function) to ObjectiveManager (Global).
 
-@export var objective_giver: ObjectiveGiver
-
 func _ready():
-	if not objective_giver:
-		objective_giver = get_parent() as ObjectiveGiver
+	# Connect to our own signal before calling parent's _ready() to avoid race conditions if give_on_ready is true.
+	objectives_ready.connect(_on_objectives_ready)
 	
-	if objective_giver:
-		objective_giver.objectives_ready.connect(_on_objectives_ready)
+	if Game.objectives:
+		Game.objectives.objective_completed.connect(_on_objective_completed)
 		
-		# (Rule 11 Exception): Connecting to Autoload signal in _ready.
-		# This is explicit coupling to the global ObjectiveManager.
-		if Game.objectives:
-			Game.objectives.objective_completed.connect(_on_objective_completed)
+	super._ready()
 
 func _on_objectives_ready(objectives: Array[ObjectiveData]):
 	for obj in objectives:
@@ -24,6 +19,6 @@ func _on_objectives_ready(objectives: Array[ObjectiveData]):
 			Game.objectives.add_objective(obj)
 
 func _on_objective_completed(_objective: ObjectiveData):
-	if objective_giver and objective_giver.delivery_mode == ObjectiveGiver.DeliveryMode.SEQUENTIAL:
+	if delivery_mode == DeliveryMode.SEQUENTIAL:
 		# If we are in sequential mode, trigger the next one automatically
-		objective_giver.trigger_delivery()
+		trigger_delivery()
