@@ -15,7 +15,8 @@ func _ready() -> void:
 	var specimen = world.specimen
 	var profile = SpecimenBridge.profile
 	
-	# Start Cycle 1 manually since cycles no longer start automatically
+	# Force pre-cycle state and start cycle 0 manually to verify the transition
+	profile.current_cycle = -1
 	cycle_manager.start_cycle()
 	
 	assert(cycle_manager != null, "FAIL: cycle_manager not instantiated")
@@ -33,9 +34,9 @@ func _ready() -> void:
 	print("[PASS] Real world scene instantiation and node resolution")
 	
 	# Assert safe default energy initial value
-	# The user requested profile.energy should initialize to 7.0 (which is 5 + 1 * 2)
-	assert(profile.energy == 7.0, "FAIL: Specimen energy should default to 7.0. Got: " + str(profile.energy))
-	print("[PASS] Specimen energy initializes to 7.0 default")
+	# The cycle starts at 0, so max energy is 5.0
+	assert(profile.energy == 5.0, "FAIL: Specimen energy should default to 5.0. Got: " + str(profile.energy))
+	print("[PASS] Specimen energy initializes to 5.0 default")
 	
 	# 2. Test AP consumption
 	assert(cycle_manager.current_ap == 10, "FAIL: AP should start at 10")
@@ -49,10 +50,10 @@ func _ready() -> void:
 	cycle_manager.end_cycle()
 	# Wait for cycle manager to finish processing cycle end
 	assert(profile.current_cycle == current_cycle + 1, "FAIL: Cycle should increment after AP reaches 0. Expected: " + str(current_cycle + 1) + ", got: " + str(profile.current_cycle))
-	# Start Cycle 2 manually
+	# Start Cycle 1 manually
 	cycle_manager.start_cycle()
 	assert(cycle_manager.current_ap == 10, "FAIL: AP should reset to 10 on new cycle")
-	assert(profile.energy == 9.0, "FAIL: Energy should reset to 9.0 on cycle 2 start. Got: " + str(profile.energy))
+	assert(profile.energy == 6.0, "FAIL: Energy should reset to 6.0 on cycle 1 start. Got: " + str(profile.energy))
 	print("[PASS] Cycle auto-termination at 0 AP")
 	
 	# 4. Test specimen energy depletion via conditioning
@@ -78,7 +79,7 @@ func _ready() -> void:
 	# Wake up and reset energy for conditioning test
 	specimen.wake_up()
 	specimen.controller.deactivate()
-	profile.energy = 7.0
+	profile.energy = 6.0
 	print("[PASS] Specimen dynamic energy costs per action and SLEEP_EARLY trigger")
 	
 	# Test action cancellation when it would put specimen to sleep
@@ -247,6 +248,33 @@ func _ready() -> void:
 	lights.update_hue_from_reward(profile.reward_schema, 0.0)
 	assert(omni_light.light_color.b > omni_light.light_color.r, "FAIL: Lights should be tinted cold blue for negative reward")
 	
+	# Test environmental audio silencing integration
+	lights.fade_lights_on(0.0)
+	assert(world.audio != null, "FAIL: Audio manager should be instantiated")
+	assert(world.audio.light_noises.size() > 0, "FAIL: Sibling Light_ noises should be cached")
+	
+	# Verify initial volume is at base levels (usually 0.0 or configured value)
+	var noise_player = world.audio.light_noises[0]
+	var base_vol = world.audio.light_noise_base_volumes.get(noise_player, 0.0)
+	print("DEBUG: Noise player volume = ", noise_player.volume_db, " | Base volume = ", base_vol)
+	assert(noise_player.volume_db == base_vol, "FAIL: Noise player volume should start at base")
+	
+	# Dim lights out instantly via snap and verify volumes snap
+	lights.snap_lights_out()
+	assert(noise_player.volume_db == -80.0, "FAIL: Noise player should snap to silent on blackout")
+	
+	# Fade lights back on and verify volumes restore
+	lights.fade_lights_on(0.05)
+	await get_tree().create_timer(0.07).timeout
+	assert(abs(noise_player.volume_db - base_vol) < 0.1, "FAIL: Noise player volume should restore close to base")
+	
+	# Dim lights slowly and verify volumes fade
+	lights.dim_lights_slow(0.05)
+	await get_tree().create_timer(0.02).timeout
+	assert(noise_player.volume_db < base_vol, "FAIL: Noise player volume should be fading down")
+	await get_tree().create_timer(0.05).timeout
+	assert(noise_player.volume_db == -80.0, "FAIL: Noise player volume should reach silent")
+
 	# Test slow dimming on AP depletion
 	profile.energy = 10.0
 	cycle_manager.current_ap = 1

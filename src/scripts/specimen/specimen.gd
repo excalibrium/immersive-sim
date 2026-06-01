@@ -25,6 +25,7 @@ const CORNERS_XZ: Array[Vector2] = [
 @onready var egg: MeshInstance3D = $Egg
 @onready var audio_player: SpecimenAudio = get_node_or_null("AudioStreamPlayer3D") as SpecimenAudio
 @onready var interactable: Interactable = get_node_or_null("Interactable")
+@onready var breath_player: AudioStreamPlayer3D = get_node_or_null("BreathPlayer") as AudioStreamPlayer3D
 
 # Idle breathing parameters (Egg phase)
 var base_egg_scale: Vector3
@@ -32,6 +33,9 @@ var breathe_time: float = 0.0
 
 # Movement and pathfinding
 @export var speed: float = 3.0
+
+@export_group("Audio")
+@export var pre_adult_breath_sound: AudioStream = preload("res://src/assets/audio/sfx/specimen/breath/pre_adult_breath.ogg")
 ## external_player: Player node reference for tracking behaviors.
 @export var external_player: Node3D
 var nav_agent: NavigationAgent3D
@@ -169,6 +173,8 @@ func _ready() -> void:
 	if profile:
 		set_physics_process(profile.phase != SpecimenProfile.Phase.EGG)
 		set_process(profile.phase != SpecimenProfile.Phase.ADULT)
+		if profile.phase == SpecimenProfile.Phase.CHILD:
+			_start_breathing()
 	else:
 		set_physics_process(false)
 		set_process(false)
@@ -320,6 +326,7 @@ func hatch() -> void:
 		controller.activate()
 		if tells.has_method("update_tells"):
 			tells.update_tells()
+		_start_breathing()
 		print("Specimen has hatched into a CHILD!")
 	)
 
@@ -530,9 +537,22 @@ func _on_phase_transitioned(new_phase: SpecimenProfile.Phase) -> void:
 	if new_phase == SpecimenProfile.Phase.CHILD:
 		set_physics_process(true)
 		set_process(true)
+		_start_breathing()
 	elif new_phase == SpecimenProfile.Phase.ADULT:
 		set_physics_process(true)
 		set_process(false)
+		_stop_breathing()
+
+func _start_breathing() -> void:
+	if breath_player:
+		if not breath_player.playing:
+			breath_player.stream = pre_adult_breath_sound
+			breath_player.play()
+
+func _stop_breathing() -> void:
+	if breath_player:
+		if breath_player.playing:
+			breath_player.stop()
 
 func _on_get_custom_prompt_data(_by_whom: Node = null) -> Dictionary:
 	var action_name = _current_action

@@ -185,6 +185,32 @@ func _ready() -> void:
 	egg_specimen.queue_free()
 	print("[PASS] Custom interaction prompt dynamically displays Current Action")
 
+	# 12. Verify Child Phase Breathing Audio
+	SpecimenBridge.profile.phase = SpecimenProfile.Phase.EGG
+	var breath_specimen = specimen_scene.instantiate()
+	add_child(breath_specimen)
+	
+	# Initially in EGG phase: BreathPlayer should exist but not be playing
+	assert(breath_specimen.breath_player != null, "FAIL: BreathPlayer node should exist")
+	assert(breath_specimen.breath_player.playing == false, "FAIL: BreathPlayer should not play in EGG phase")
+	
+	# Trigger hatch (transitions to CHILD): BreathPlayer should start playing the correct stream
+	breath_specimen.hatch()
+	await get_tree().create_timer(1.2).timeout # await hatch tween completion
+	assert(breath_specimen.breath_player.playing == true, "FAIL: BreathPlayer should start playing in CHILD phase")
+	assert(breath_specimen.breath_player.stream.resource_path == "res://src/assets/audio/sfx/specimen/breath/pre_adult_breath.ogg", "FAIL: BreathPlayer should play pre_adult_breath.ogg")
+	
+	# Transition to ADULT phase: BreathPlayer should stop playing
+	breath_specimen._on_phase_transitioned(SpecimenProfile.Phase.ADULT)
+	assert(breath_specimen.breath_player.playing == false, "FAIL: BreathPlayer should stop in ADULT phase")
+	
+	# Transition back to CHILD phase: BreathPlayer should start playing again
+	breath_specimen._on_phase_transitioned(SpecimenProfile.Phase.CHILD)
+	assert(breath_specimen.breath_player.playing == true, "FAIL: BreathPlayer should resume in CHILD phase")
+	
+	breath_specimen.queue_free()
+	print("[PASS] Child phase breathing audio control")
+
 	# Clean up
 	specimen.queue_free()
 	SpecimenBridge.end_run()

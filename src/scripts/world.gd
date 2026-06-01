@@ -10,6 +10,7 @@ const RS = preload("res://src/scripts/conditioning/reinforcement_system.gd")
 @onready var specimen: Specimen = $Specimen
 @onready var monitor_panel = $MonitorPanel
 @onready var lights: LightSystem = $Lights
+@onready var audio = $Audio
 
 ## Sibling exports with lookups as fallback
 @export var player_interactor: PlayerInteractor
@@ -129,6 +130,15 @@ func _ready():
 		cycle_manager.phase_transitioned.connect(func(new_phase: int):
 			specimen._on_phase_transitioned(new_phase)
 		)
+
+	# Sibling connection for environmental audio and light system transitions
+	if lights and audio:
+		lights.dimmed.connect(audio.dim_noises)
+		lights.snapped_out.connect(audio.snap_noises_out)
+		lights.faded_on.connect(audio.fade_noises_on)
+	
+	if cycle_manager:
+		cycle_manager.start_cycle()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -287,7 +297,7 @@ func _on_subaction_selected(category: String, action_type: String) -> void:
 			elif action_upper == "SLEEP":
 				if cycle_manager:
 					if profile:
-						if profile.current_cycle == 0:
+						if profile.current_cycle < 0:
 							cycle_manager.start_cycle()
 						else:
 							if cycle_manager.is_cycle_active:
@@ -330,7 +340,7 @@ func _update_bed_radial_ui() -> void:
 	}
 	var center_override = {
 		"header": "REST MODULE",
-		"current_action": "CYCLE: " + str(profile.current_cycle),
+		"current_action": "NOT STARTED" if profile.current_cycle < 0 else "CYCLE: " + str(profile.current_cycle),
 		"lines": [],
 		"energy": ""
 	}

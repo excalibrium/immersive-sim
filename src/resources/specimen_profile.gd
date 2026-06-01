@@ -35,7 +35,7 @@ enum Morphology {
 @export var resonance_frequency: float = 0.0
 
 # --- Cycle Tracking ---
-var current_cycle: int = 0
+var current_cycle: int = -1
 
 # --- Action Pool ---
 # Dictionary of action_id : weight (float, floor 1.0)

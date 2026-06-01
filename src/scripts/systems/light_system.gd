@@ -1,10 +1,21 @@
 class_name LightSystem
 extends Node3D
 
+signal dimmed(duration: float)
+signal snapped_out
+signal faded_on(duration: float)
+
 ## System to control room lights, cycle transitions, and reward schema-based color shifting.
 
 # Constants for default values
 const DEFAULT_LAMP_EMISSION_MULT: float = 128.0
+
+@export_group("Reward Colors")
+@export var positive_reward_color: Color = Color(1.0, 0.7, 0.35) ## Warm amber/orange
+@export var negative_reward_color: Color = Color(0.4, 0.75, 1.0) ## Cold blue/cyan
+@export var neutral_reward_color: Color = Color(1.0, 1.0, 1.0)    ## Standard white
+@export var max_reward_scale: float = 50.0                       ## Range scale for reward schema interpolation
+
 
 # References and cached base settings
 var omni_lights: Array[OmniLight3D] = []
@@ -37,9 +48,6 @@ func _ready() -> void:
 	
 	# Start in a clean, default state: set process to false as we only need Tweens
 	set_process(false)
-	
-	# Initial configuration: snap lights off so they can fade on smoothly on cycle start
-	snap_lights_out()
 
 func _find_omni_lights(node: Node) -> void:
 	if node is OmniLight3D:
@@ -83,17 +91,15 @@ func _setup_lamp_material() -> void:
 			for mi in mesh_instances:
 				mi.material_override = lamp_material
 
-## Calculates the color matching the reward_schema value (-50.0 to 50.0)
+## Calculates the color matching the reward_schema value based on configured reward colors
 func get_color_for_reward(reward: float) -> Color:
 	var t: float = 0.0
 	if reward >= 0.0:
-		t = clamp(reward / 50.0, 0.0, 1.0)
-		# Lerp from white to warm amber/orange
-		return Color(1.0, 1.0, 1.0).lerp(Color(1.0, 0.7, 0.35), t)
+		t = clamp(reward / max_reward_scale, 0.0, 1.0)
+		return neutral_reward_color.lerp(positive_reward_color, t)
 	else:
-		t = clamp(abs(reward) / 50.0, 0.0, 1.0)
-		# Lerp from white to cold blue/cyan
-		return Color(1.0, 1.0, 1.0).lerp(Color(0.4, 0.75, 1.0), t)
+		t = clamp(abs(reward) / max_reward_scale, 0.0, 1.0)
+		return neutral_reward_color.lerp(negative_reward_color, t)
 
 ## Tweens light colors and emission color based on the specimen's reward schema.
 func update_hue_from_reward(reward_schema: float, duration: float = 1.0) -> Tween:
@@ -128,6 +134,7 @@ func update_hue_from_reward(reward_schema: float, duration: float = 1.0) -> Twee
 
 ## Slowly dims all room lights and emission to 0.0 energy.
 func dim_lights_slow(duration: float) -> Tween:
+	dimmed.emit(duration)
 	if energy_tween:
 		energy_tween.kill()
 		energy_tween = null
@@ -149,6 +156,7 @@ func dim_lights_slow(duration: float) -> Tween:
 
 ## Instantly snaps all room lights and emission to 0.0 energy.
 func snap_lights_out() -> void:
+	snapped_out.emit()
 	if energy_tween:
 		energy_tween.kill()
 		energy_tween = null
@@ -162,6 +170,7 @@ func snap_lights_out() -> void:
 
 ## Fades all room lights and emission back to their cached base energy levels.
 func fade_lights_on(duration: float) -> Tween:
+	faded_on.emit(duration)
 	if energy_tween:
 		energy_tween.kill()
 		energy_tween = null

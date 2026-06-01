@@ -32,8 +32,8 @@ func start_cycle() -> void:
 	
 	var profile = SpecimenBridge.profile
 	if profile:
-		if profile.current_cycle == 0:
-			profile.current_cycle = 1
+		if profile.current_cycle == -1:
+			profile.current_cycle = 0
 		# Specimen energy: get_max_energy() (Rule 18 / Runtime state)
 		profile.energy = profile.get_max_energy()
 		print("CycleManager: Started Cycle ", profile.current_cycle, " | AP: ", current_ap, " | Energy: ", profile.energy)
