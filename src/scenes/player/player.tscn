@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://b1hc4kl6l2jm5" path="res://src/scenes/player/player.gd" id="1_swhsd"]
 [ext_resource type="Script" uid="uid://3xnkdkqmefvu" path="res://src/scripts/player/player_interactor.gd" id="2_interactor"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_yx56f"]
+[ext_resource type="PackedScene" uid="uid://br15r8623ndd3" path="res://src/scenes/player/model/player_model.tscn" id="3_model"]
+[ext_resource type="PackedScene" uid="uid://0k3gl2t83s22" path="res://src/scenes/gun/74KA.tscn" id="4_gun"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_swhsd"]
 radius = 0.4
@@ -11,19 +11,29 @@ radius = 0.4
 [sub_resource type="BoxShape3D" id="BoxShape3D_qopur"]
 
 [node name="Player" type="CharacterBody3D" unique_id=1371803597 node_paths=PackedStringArray("camera_3d") groups=["player"]]
+floor_max_angle = 1.5219271
+floor_snap_length = 0.16
 script = ExtResource("1_swhsd")
 camera_3d = NodePath("Camera3D")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=942305582]
-mesh = SubResource("CapsuleMesh_yx56f")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=405247634]
 shape = SubResource("CapsuleShape3D_swhsd")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=148639062]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.79808056, 0)
 
 [node name="RayCast3D" type="RayCast3D" parent="Camera3D" unique_id=1269249028]
 target_position = Vector3(0, 0, -3)
+
+[node name="ShootRayCast" type="RayCast3D" parent="Camera3D" unique_id=1269249029]
+target_position = Vector3(0, 0, -100)
+
+[node name="GunAnchor" type="Node3D" parent="Camera3D" unique_id=184910283]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.26, -0.45)
+
+[node name="74ka" parent="Camera3D/GunAnchor" unique_id=1444751888 instance=ExtResource("4_gun")]
+transform = Transform3D(0.365, 0, 0, 0, 0.365, 0, 0, 0, 0.365, 0, 0.11167282, -0.2186619)
+fire_rate = 0.02
 
 [node name="PlayerInteractor" type="Node3D" parent="." unique_id=661214063 node_paths=PackedStringArray("raycast", "proximity_area")]
 script = ExtResource("2_interactor")
@@ -36,3 +46,6 @@ collision_layer = 0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ProximityArea" unique_id=2115356404]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 shape = SubResource("BoxShape3D_qopur")
+
+[node name="PlayerModel" parent="." unique_id=477069647 instance=ExtResource("3_model")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)

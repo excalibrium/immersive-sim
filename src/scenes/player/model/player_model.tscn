@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://br15r8623ndd3"]
+
+[ext_resource type="PackedScene" uid="uid://c83f5qvccv2qg" path="res://src/assets/models/player/stickman15.glb" id="1_d7r4p"]
+
+[node name="stickman15" unique_id=137643442 instance=ExtResource("1_d7r4p")]
+
+[node name="Armature" parent="." index="0" unique_id=712670863]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 1, -0.3)
+
+[node name="Skeleton3D" parent="Armature" index="0" unique_id=1901822964]
+bones/0/position = Vector3(0, -0.09703704, 0)
+bones/4/rotation = Quaternion(-0.0005130886, 0, 0, 0.9999999)
+bones/5/rotation = Quaternion(-2.6692543e-08, 2.6692543e-08, 0.7071068, 0.7071068)
+bones/6/rotation = Quaternion(-0.07309744, -0.14787355, 0.39691597, 0.90291077)
+bones/7/rotation = Quaternion(0.1978141, 0.0034491753, 0.068832256, 0.9778138)
+bones/8/rotation = Quaternion(0.0162022, -0.0010829548, -0.111763775, 0.99360216)
+bones/9/position = Vector3(-0.01557434, 0.09782435, -0.060166225)
+bones/9/rotation = Quaternion(-0.23274985, 0.094248444, 0.15986766, 0.954666)
+bones/10/position = Vector3(-0.008394364, 0.123050645, -0.03276203)
+bones/10/rotation = Quaternion(-0.1712952, 0.060647044, 0.1383079, 0.9735763)
+bones/11/position = Vector3(-0.009368303, 0.12421246, -0.0007700023)
+bones/11/rotation = Quaternion(-0.06004754, 0.021765994, 0.1904249, 0.9796218)
+bones/12/position = Vector3(-0.01468535, 0.12588207, 0.027351212)
+bones/12/rotation = Quaternion(0.0268835, -0.013251672, 0.22419268, 0.9740839)
+bones/13/position = Vector3(0.0021934079, 0.04505217, 0.06024434)
+bones/13/rotation = Quaternion(0.4357877, -0.12644915, 0.09943428, 0.8855578)
+bones/14/rotation = Quaternion(-2.6692543e-08, -2.6692543e-08, -0.7071068, 0.7071068)
+bones/15/rotation = Quaternion(-0.025818007, -0.014516101, -0.48097387, 0.8762346)
+bones/16/rotation = Quaternion(0.1978141, -0.0034491827, -0.06883227, 0.9778138)
+bones/17/rotation = Quaternion(0.016202187, 0.0010829745, 0.111763746, 0.99360216)
+bones/18/position = Vector3(0.015574348, 0.09782445, -0.06016624)
+bones/18/rotation = Quaternion(-0.23274983, -0.09424846, -0.15986766, 0.954666)
+bones/19/position = Vector3(0.008394321, 0.12305078, -0.032762006)
+bones/19/rotation = Quaternion(-0.17129518, -0.060647048, -0.13830791, 0.9735763)
+bones/20/position = Vector3(0.0093682, 0.12421259, -0.0007699689)
+bones/20/rotation = Quaternion(-0.06004752, -0.021765992, -0.19042487, 0.9796218)
+bones/21/position = Vector3(0.014685319, 0.12588206, 0.027351234)
+bones/21/rotation = Quaternion(0.026883492, 0.013251674, -0.22419265, 0.9740839)
+bones/22/position = Vector3(-0.0021934058, 0.045052238, 0.060244326)
+bones/22/rotation = Quaternion(0.4357877, 0.12644915, -0.09943432, 0.8855578)
+bones/23/rotation = Quaternion(0.08176754, 0.35519302, 0.92935264, 0.058785014)
+bones/24/position = Vector3(8.940692e-09, -0.09703705, -4.8007625e-09)
+bones/25/rotation = Quaternion(0.88162845, -0.14644694, -0.06492563, -0.44392484)
+bones/26/rotation = Quaternion(0.011566703, -0.0558236, -0.80782884, 0.5866536)
+bones/27/rotation = Quaternion(-0.044207916, 0.0002441616, -0.02597028, 0.99868476)
+bones/28/rotation = Quaternion(-0.004898061, -1.2650634e-07, 0.7005211, 0.7136149)
+bones/29/position = Vector3(-8.940692e-09, -0.09703705, -4.8007625e-09)
+bones/30/rotation = Quaternion(0.87603843, 0.17816208, 0.0788226, -0.44113722)
+bones/31/rotation = Quaternion(0.01772013, -0.0043254187, -0.021631937, 0.99959964)
+bones/32/rotation = Quaternion(-0.04318705, 0.0046832776, 0.13663475, 0.9896686)
+bones/33/rotation = Quaternion(-0.004294655, 1.3102543e-07, -0.614222, 0.78912157)
+
+[node name="LeftHandIK" type="TwoBoneIK3D" parent="Armature/Skeleton3D" index="0" unique_id=412641970]
+setting_count = 1
+settings/0/target_node = NodePath("")
+settings/0/pole_node = NodePath("../../../LeftElbowPole")
+settings/0/root_bone_name = "Arm.L"
+settings/0/root_bone = 15
+settings/0/middle_bone_name = "Arm.L.001"
+settings/0/middle_bone = 16
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "Hand.L"
+settings/0/end_bone = 17
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="RightHandIK" type="TwoBoneIK3D" parent="Armature/Skeleton3D" index="1" unique_id=1370413405]
+setting_count = 1
+settings/0/target_node = NodePath("")
+settings/0/pole_node = NodePath("../../../RightElbowPole")
+settings/0/root_bone_name = "Arm.R"
+settings/0/root_bone = 6
+settings/0/middle_bone_name = "Arm.R.001"
+settings/0/middle_bone = 7
+settings/0/pole_direction = 0
+settings/0/end_bone_name = "Hand.R"
+settings/0/end_bone = 8
+settings/0/use_virtual_end = false
+settings/0/extend_end_bone = false
+
+[node name="NeckAttachment" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="2" unique_id=1345336029]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5029628, 0)
+bone_name = "Neck"
+bone_idx = 3
+
+[node name="HandLAttachment" type="BoneAttachment3D" parent="Armature/Skeleton3D" index="3" unique_id=143248615]
+transform = Transform3D(-0.7969429, 0.58716077, -0.14185873, -0.5929747, -0.71567285, 0.3690433, 0.115163356, 0.37822518, 0.91852206, 0.4851237, -0.04783547, 0.111447744)
+bone_name = "Hand.L"
+bone_idx = 17
+
+[node name="Plane" parent="Armature/Skeleton3D" index="4" unique_id=5598707]
+"blend_shapes/Key 1" = 1.0
+
+[node name="LeftElbowPole" type="Marker3D" parent="." index="2" unique_id=1853913104]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1, 0.5)
+
+[node name="RightElbowPole" type="Marker3D" parent="." index="3" unique_id=2119171725]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0.5)

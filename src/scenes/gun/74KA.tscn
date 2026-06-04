@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://0k3gl2t83s22"]
+
+[ext_resource type="Script" uid="uid://ccg4m1o4lpp3x" path="res://src/scenes/gun/gun.gd" id="1_gun"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_uymt3"]
+size = Vector3(0.195, 0.18, 2.635)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_uymt3"]
+top_radius = 0.1
+bottom_radius = 0.1
+radial_segments = 8
+
+[sub_resource type="BoxMesh" id="BoxMesh_ser8a"]
+size = Vector3(0.13, 0.385, 0.25)
+
+[sub_resource type="Animation" id="Animation_uymt3"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("barrelholder/barrel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0.09, -0.317)]
+}
+
+[sub_resource type="Animation" id="Animation_ser8a"]
+resource_name = "fire"
+length = 0.04
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("barrelholder/barrel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0.09, -0.317), Vector3(0, 0.09, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_m6j8r"]
+resource_name = "idle"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("barrelholder/barrel:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0.09, -0.317)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ann7l"]
+_data = {
+&"RESET": SubResource("Animation_uymt3"),
+&"fire": SubResource("Animation_ser8a"),
+&"idle": SubResource("Animation_m6j8r")
+}
+
+[node name="74ka" type="Node3D" unique_id=512403299]
+script = ExtResource("1_gun")
+
+[node name="barrelholder" type="MeshInstance3D" parent="." unique_id=148621105]
+mesh = SubResource("BoxMesh_uymt3")
+
+[node name="Muzzle" type="Marker3D" parent="barrelholder" unique_id=2081549830]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09, -1.32)
+
+[node name="MuzzleFlashLight" type="OmniLight3D" parent="barrelholder/Muzzle" unique_id=1028359401]
+light_color = Color(1, 0.647059, 0.14902, 1)
+light_energy = 3.0
+omni_range = 10.0
+
+[node name="barrel" type="MeshInstance3D" parent="barrelholder" unique_id=1303903029]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.09, -0.317)
+mesh = SubResource("CylinderMesh_uymt3")
+
+[node name="hand_L" type="Marker3D" parent="barrelholder/barrel" unique_id=2142400769]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, -0.22864425, -0.317, -0.32494962)
+
+[node name="handle" type="MeshInstance3D" parent="barrelholder" unique_id=1318347286]
+transform = Transform3D(1, 0, 0, 0, 0.9659258, 0.25881904, 0, -0.25881904, 0.9659258, 0, -0.25031456, 0.8304708)
+mesh = SubResource("BoxMesh_ser8a")
+
+[node name="hand_R" type="Marker3D" parent="barrelholder/handle" unique_id=1924751878]
+transform = Transform3D(1, 0, 0, 0, -2.9802322e-08, -1.0000004, 0, 1.0000004, -2.9802322e-08, 0.18138087, -0.0017425418, -0.0055269003)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=329129378]
+libraries/ = SubResource("AnimationLibrary_ann7l")
