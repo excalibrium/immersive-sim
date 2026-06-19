@@ -144,6 +144,7 @@ func _ready() -> void:
 	
 	# Deplete energy to 0 (6 more conditioning actions)
 	for i in range(6):
+		world._current_action_conditioned = false
 		world._apply_conditioning_with_energy("REINFORCE")
 	
 	assert(profile.energy == 0.0, "FAIL: Energy should be 0.0. Got: " + str(profile.energy))
@@ -158,6 +159,7 @@ func _ready() -> void:
 	var old_reward = profile.reward_schema
 	var old_coherence = profile.identity_coherence
 	
+	world._current_action_conditioned = false
 	world._apply_conditioning_with_energy("REINFORCE")
 	assert(profile.reward_schema == old_reward - 2.0, "FAIL: Silent reward penalty not applied")
 	assert(profile.identity_coherence == old_coherence - 2.0, "FAIL: Silent coherence penalty not applied")

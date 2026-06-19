@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ItemResource" format=3 uid="uid://duael1dnh4efx"]
+
+[ext_resource type="Script" uid="uid://qfwpbd5hj3dv" path="res://src/resources/item_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://c6v2d1n4p1x3f" path="res://src/scenes/player/visuals/BroomVisual.tscn" id="2_visual"]
+
+[resource]
+script = ExtResource("1_script")
+item_id = "broom"
+display_name_key = "BROOM"
+weight = 0.1
+visual_scene = ExtResource("2_visual")

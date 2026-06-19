@@ -23,6 +23,11 @@ var carry_speed_modifier: float = 1.0
 var carry_can_sprint: bool = true
 var carry_can_jump: bool = true
 
+# --- HELD ITEM SYSTEM ---
+signal held_item_changed(new_item: ItemResource)
+var active_item_id: String = ""
+var player_pickup: PlayerPickup = null
+
 # --- CAMERA SHAKE SYSTEM ---
 var timed_shake_intensity: float = 0.0
 var timed_shake_timer: float = 0.0
@@ -33,6 +38,7 @@ var continuous_shake_intensity: float = 0.0
 # --- NODES ---
 @export var camera_3d : Camera3D
 @onready var collision_shape : CollisionShape3D = $CollisionShape3D
+@onready var held_item_visuals : Node3D = $Camera3D/HeldItemVisuals
 
 # --- MOVEMENT VARIABLES ---
 var jump_buffer_time: float = 0.1
@@ -55,7 +61,14 @@ func _ready():
 	# Connect to PlayerPickup component if present in subtree
 	var pickup_node = find_child("PlayerPickup")
 	if pickup_node:
+		player_pickup = pickup_node as PlayerPickup
 		pickup_node.carry_weight_changed.connect(_on_carry_weight_changed)
+		
+	# Connect to inventory manager
+	if Game.inventory:
+		Game.inventory.inventory_updated.connect(_on_inventory_updated)
+	else:
+		_connect_inventory_deferred.call_deferred()
 
 
 func _on_setting_changed(section: String, key: String, value: Variant):
@@ -72,6 +85,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		if camera_3d:
 			camera_3d.rotate_x(-event.relative.y * mouse_sensitivity)
 			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+	
+	# Scroll or use held item (only if not carrying a physics object)
+	if WindowManager.is_mouse_captured() and player_pickup and player_pickup.held_body == null:
+		if event.is_action_pressed("carry_zoom_in"):
+			_scroll_held_item(1)
+		elif event.is_action_pressed("carry_zoom_out"):
+			_scroll_held_item(-1)
+		elif event.is_action_pressed("primary_action"):
+			use_held_item()
 	
 	# Release mouse / Open Pause Menu
 	if event.is_action_pressed("back"):
@@ -281,3 +303,93 @@ func _on_carry_weight_changed(mass: float):
 		# Continuous tremble to represent lifting tension close to max capacity
 		var strain_ratio = clamp(mass / strength, 0.0, 1.0)
 		set_continuous_shake(lerp(0.0, 0.008, strain_ratio))
+
+# --- HELD ITEM SYSTEM FUNCTIONS ---
+func _connect_inventory_deferred() -> void:
+	if Game.inventory:
+		Game.inventory.inventory_updated.connect(_on_inventory_updated)
+		_on_inventory_updated()
+		_update_held_item_visuals()
+
+func _on_inventory_updated() -> void:
+	# Verify that the active item is still in the inventory
+	if active_item_id != "":
+		var found = false
+		if Game.inventory:
+			for item in Game.inventory.get_items():
+				if item.item_id == active_item_id:
+					found = true
+					break
+		if not found:
+			active_item_id = ""
+			held_item_changed.emit(null)
+			_update_held_item_visuals()
+
+func get_held_item() -> ItemResource:
+	if active_item_id == "" or not Game.inventory:
+		return null
+	for item in Game.inventory.get_items():
+		if item.item_id == active_item_id:
+			return item
+	return null
+
+func _scroll_held_item(direction: int) -> void:
+	if not Game.inventory:
+		return
+		
+	var items = Game.inventory.get_items()
+	
+	# Filter duplicates to have unique scrollable options
+	var unique_items: Array[ItemResource] = []
+	var seen_ids = {}
+	for item in items:
+		if not seen_ids.has(item.item_id):
+			seen_ids[item.item_id] = true
+			unique_items.append(item)
+			
+	var total_options = unique_items.size() + 1
+	
+	var current_index = 0
+	if active_item_id != "":
+		for i in range(unique_items.size()):
+			if unique_items[i].item_id == active_item_id:
+				current_index = i + 1
+				break
+				
+	var new_index = (current_index + direction) % total_options
+	if new_index < 0:
+		new_index += total_options
+		
+	var old_id = active_item_id
+	if new_index == 0:
+		active_item_id = ""
+	else:
+		active_item_id = unique_items[new_index - 1].item_id
+		
+	if active_item_id != old_id:
+		held_item_changed.emit(get_held_item())
+		_update_held_item_visuals()
+		get_viewport().set_input_as_handled()
+
+func _update_held_item_visuals() -> void:
+	if not held_item_visuals:
+		return
+		
+	# Clear existing children
+	for child in held_item_visuals.get_children():
+		child.queue_free()
+		
+	var item = get_held_item()
+	if item and item.visual_scene:
+		var inst = item.visual_scene.instantiate()
+		held_item_visuals.add_child(inst)
+
+func use_held_item() -> void:
+	if not held_item_visuals or held_item_visuals.get_child_count() == 0:
+		return
+		
+	var active_visual = held_item_visuals.get_child(0)
+	if active_visual:
+		var use_comp = active_visual.get_node_or_null("ItemUseComponent")
+		if use_comp and use_comp.has_method("trigger_use"):
+			use_comp.trigger_use(self)

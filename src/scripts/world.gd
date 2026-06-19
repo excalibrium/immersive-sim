@@ -21,6 +21,7 @@ var reinforcement_system: ReinforcementSystem = null
 var cycle_manager: CycleManager = null
 var ap_label: Label = null
 var _is_interacting_with_bed: bool = false
+var _current_action_conditioned: bool = false
 
 func _enter_tree():
 	# 0. Initialize Game Session early so children can access it in _ready
@@ -38,6 +39,10 @@ func _ready():
 		player_interactor = player.find_child("PlayerInteractor") as PlayerInteractor
 	if player_interactor:
 		crosshair.setup(player_interactor)
+		
+	var held_item_ui = $UI.get_node_or_null("HeldItemUI")
+	if held_item_ui and player:
+		held_item_ui.setup(player)
 		
 	# Instantiate systems dynamically for prototype testing
 	reinforcement_system = RS.new()
@@ -66,9 +71,13 @@ func _ready():
 	
 	add_child(cycle_manager)
 
-	# Connect MonitorPanel cycle end signal
+	# Connect MonitorPanel cycle end and shop signals
 	if monitor_panel:
 		monitor_panel.end_cycle_requested.connect(_on_monitor_panel_end_cycle_requested)
+		if monitor_panel.has_signal("shop_opened"):
+			monitor_panel.shop_opened.connect(_on_monitor_panel_shop_opened)
+		if monitor_panel.has_signal("object_purchased"):
+			monitor_panel.object_purchased.connect(_on_monitor_panel_object_purchased)
 
 	# Connect Radial UI events if present in the tree
 	if not radial_ui:
@@ -108,12 +117,14 @@ func _ready():
 	# Connect Specimen actions to update Radial UI real-time logs
 	if specimen and radial_ui:
 		specimen.action_performed.connect(func(_action_id: String):
+			_current_action_conditioned = false
 			if radial_ui.is_menu_open and SpecimenBridge.profile:
 				if _is_interacting_with_bed:
 					_update_bed_radial_ui()
 				else:
 					var profile = SpecimenBridge.profile
-					radial_ui.update_realtime_data(profile.action_log, profile.energy, profile.get_max_energy(), {}, specimen._current_action)
+					var config = _get_specimen_radial_config()
+					radial_ui.update_realtime_data(profile.action_log, profile.energy, profile.get_max_energy(), config, specimen._current_action)
 		)
 		specimen.sleep_entered.connect(func():
 			if radial_ui.is_menu_open and SpecimenBridge.profile:
@@ -137,8 +148,17 @@ func _ready():
 		lights.snapped_out.connect(audio.snap_noises_out)
 		lights.faded_on.connect(audio.fade_noises_on)
 	
+	# Instantiate and set up CorporateObjectivesManager
+	var corp_manager_script = load("res://src/scripts/systems/corporate_objectives_manager.gd")
+	var corp_manager = corp_manager_script.new()
+	corp_manager.name = "CorporateObjectivesManager"
+	corp_manager.cycle_manager = cycle_manager
+	corp_manager.specimen = specimen
+	add_child(corp_manager)
+	
 	if cycle_manager:
 		cycle_manager.start_cycle()
+
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -194,12 +214,18 @@ func _print_status() -> void:
 	if cycle_manager:
 		print("Cycle AP: ", cycle_manager.current_ap)
 	print("Action Pool Weights: ", profile.action_pool)
+	if specimen and is_instance_valid(specimen.controller):
+		print("Action Boredom: ", specimen.controller.action_boredom)
 	print("Action Log: ", profile.action_log)
 	print("---------------------------------------------")
 
 func _apply_conditioning_with_energy(type: String) -> void:
 	var profile = SpecimenBridge.profile
 	if not profile:
+		return
+		
+	if _current_action_conditioned:
+		print("World: Current action already conditioned. Ignoring.")
 		return
 		
 	# Consume AP
@@ -230,9 +256,14 @@ func _apply_conditioning_with_energy(type: String) -> void:
 		if type == "REINFORCE":
 			if reinforcement_system:
 				reinforcement_system.reinforce()
+			InteractionBus.conditioning_applied.emit("REINFORCE")
 		else:
 			if reinforcement_system:
 				reinforcement_system.punish()
+			InteractionBus.conditioning_applied.emit("PUNISH")
+			
+		_current_action_conditioned = true
+
 				
 		# If energy hits 0, trigger sleep
 		if profile.energy <= 0.0 and specimen and not specimen.is_sleeping:
@@ -256,6 +287,7 @@ func _on_subaction_selected(category: String, action_type: String) -> void:
 						return
 				if specimen:
 					specimen.apply_sleep_interaction("PET")
+				InteractionBus.conditioning_applied.emit("PET")
 				_print_status()
 			else:
 				_apply_conditioning_with_energy("REINFORCE")
@@ -267,6 +299,7 @@ func _on_subaction_selected(category: String, action_type: String) -> void:
 						return
 				if specimen:
 					specimen.apply_sleep_interaction("SHOCK")
+				InteractionBus.conditioning_applied.emit("SHOCK")
 				_print_status()
 			else:
 				_apply_conditioning_with_energy("PUNISH")
@@ -404,6 +437,22 @@ func _get_specimen_radial_config() -> Dictionary:
 	if profile.current_cycle >= 18 and profile.phase == SpecimenProfile.Phase.CHILD:
 		right_subactions = ["CERTIFY", "CHECK_STATUS"]
 		
+	if _current_action_conditioned:
+		return {
+			"TOP": {
+				"label": "RATED",
+				"disabled": true
+			},
+			"BOTTOM": {
+				"label": "RATED",
+				"disabled": true
+			},
+			"RIGHT": {
+				"label": "SYSTEM",
+				"subactions": right_subactions
+			}
+		}
+		
 	return {
 		"TOP": {
 			"label": reinforce_labels[tier],
@@ -418,3 +467,41 @@ func _get_specimen_radial_config() -> Dictionary:
 			"subactions": right_subactions
 		}
 	}
+
+
+func _on_monitor_panel_shop_opened() -> void:
+	var spawned_keys = []
+	var objects_root = get_node_or_null("Objects")
+	if objects_root:
+		for child in objects_root.get_children():
+			spawned_keys.append(child.name)
+	if monitor_panel:
+		monitor_panel.update_spawned_items(spawned_keys)
+
+func _on_monitor_panel_object_purchased(item_key: String, scene_path: String, spawn_pos: Vector3, spawn_rot: Vector3) -> void:
+	print("World: Spawning purchased object: ", item_key, " from ", scene_path)
+	var scene = load(scene_path)
+	if not scene:
+		push_error("Failed to load scene: " + scene_path)
+		return
+		
+	var obj = scene.instantiate() as Node3D
+	if not obj:
+		push_error("Failed to instantiate scene: " + scene_path)
+		return
+		
+	var objects_root = get_node_or_null("Objects")
+	if not objects_root:
+		push_error("Failed to find Objects root node in world scene.")
+		obj.queue_free()
+		return
+		
+	# Spawn at configured position and rotation
+	obj.name = item_key
+	obj.global_rotation_degrees = spawn_rot
+	objects_root.add_child(obj)
+	obj.global_position = spawn_pos
+	print("World: Successfully spawned ", obj.name, " at ", obj.global_position, " with rotation ", obj.global_rotation_degrees)
+	
+	# Update shop with the new list of spawned items
+	_on_monitor_panel_shop_opened()

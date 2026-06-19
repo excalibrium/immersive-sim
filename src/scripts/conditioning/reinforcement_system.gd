@@ -2,7 +2,7 @@ class_name ReinforcementSystem
 extends Node
 
 # Recency weights for log positions [most recent, second, third]
-const RECENCY_WEIGHTS = [10.0, 5.0, 2.0]
+const RECENCY_WEIGHTS = [4.0, 2.0, 1.0]
 const RUTHLESSNESS_DELTA = 5.0
 
 func reinforce() -> void:

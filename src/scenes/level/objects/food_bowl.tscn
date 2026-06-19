@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://cudxj2drnxmmb"]
+
+[ext_resource type="PackedScene" uid="uid://b1l3qi4qtwjlt" path="res://src/assets/models/objects/food_bowl/FoodBowl.glb" id="1_pvxln"]
+
+[node name="FoodBowl" unique_id=397278405 instance=ExtResource("1_pvxln")]

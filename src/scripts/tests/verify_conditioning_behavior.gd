@@ -23,8 +23,8 @@ func _test_reinforcement() -> void:
 	rs.reinforce()
 	
 	assert(profile.ruthlessness == 45.0, "FAIL: ruthlessness expected 45.0")
-	assert(profile.action_pool["VOCALIZE"] == 20.0, "FAIL: VOCALIZE expected 20.0, got %s" % profile.action_pool["VOCALIZE"])
-	assert(profile.identity_coherence == 51.0, "FAIL: identity_coherence expected 51.0")
+	assert(profile.action_pool["VOCALIZE"] == 14.0, "FAIL: VOCALIZE expected 14.0, got %s" % profile.action_pool["VOCALIZE"])
+	assert(profile.identity_coherence == 50.4, "FAIL: identity_coherence expected 50.4, got %s" % profile.identity_coherence)
 	print("[PASS] Reinforcement mechanics")
 	SpecimenBridge.end_run()
 	rs.queue_free()

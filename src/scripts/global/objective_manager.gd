@@ -77,6 +77,7 @@ func update_task(task_id: String, completed: bool):
 			session.active_objectives.erase(objective_to_move)
 			session.completed_objectives.append(objective_to_move)
 		
+		session.credits += 10
 		objective_completed.emit(objective_to_move)
 		objectives_updated.emit(session.active_objectives)
 		print("OBJECTIVE_COMPLETED: ", objective_to_move.title_key)

@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://d4acte85sfht0"]
+
+[ext_resource type="PackedScene" uid="uid://7ib43gjtfiuq" path="res://src/assets/models/objects/food_pack/Food_Pack_SF.glb" id="1_dhk65"]
+
+[node name="Food_Pack_SF" unique_id=1544848027 instance=ExtResource("1_dhk65")]

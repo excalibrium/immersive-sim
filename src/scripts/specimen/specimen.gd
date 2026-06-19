@@ -513,6 +513,7 @@ func wake_up() -> void:
 		controller.activate()
 		
 	state_machine.transition_to(SpecimenStateMachine.Action.PLAY)
+	action_performed.emit("PLAY")
 	print("Specimen: Woke up! Resuming actions. Energy restored to: ", profile.energy if profile else 0.0)
 
 func apply_sleep_interaction(action_type: String) -> void:

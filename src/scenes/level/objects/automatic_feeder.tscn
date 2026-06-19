@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://qmsokeabnqwm"]
+
+[ext_resource type="PackedScene" uid="uid://cxhkoeedyxrdi" path="res://src/assets/models/objects/automatic_feeder/automatic_feeder.glb" id="1_jfewx"]
+
+[node name="automatic_feeder" unique_id=2058494438 instance=ExtResource("1_jfewx")]

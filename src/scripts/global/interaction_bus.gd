@@ -4,3 +4,5 @@ extends Node
 ## Adheres to Rule 30 (Autoloads for stateless event buses).
 
 signal bed_sleep_requested()
+signal conditioning_applied(type: String)
+

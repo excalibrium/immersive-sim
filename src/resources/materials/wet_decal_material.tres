@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://b155s0b2768o0"]
+
+[ext_resource type="Shader" uid="uid://b7seequfkrewb" path="res://src/shaders/screen_space_decal.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" uid="uid://choywdpynnqfr" path="res://src/assets/decals/brush014.png" id="2_texture"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/albedo_texture = ExtResource("2_texture")
+shader_parameter/albedo_color = Color(0.12, 0.1, 0.08, 0.8)
+shader_parameter/normal_threshold = 0.3600000171

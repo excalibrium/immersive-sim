@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://dmfk6j1c265es"]
+
+[ext_resource type="PackedScene" uid="uid://caqvyoelj1ywx" path="res://src/assets/models/objects/poop/poop.glb" id="1_yqxop"]
+[ext_resource type="ArrayMesh" uid="uid://5hi12k0hbg2y" path="res://src/assets/models/objects/poop/poop2_model.tres" id="2_5ye66"]
+[ext_resource type="Script" uid="uid://dxq2dsa73rif7" path="res://src/scripts/objects/poop.gd" id="2_e248h"]
+
+[node name="poop" unique_id=326122940 node_paths=PackedStringArray("meshes") instance=ExtResource("1_yqxop")]
+script = ExtResource("2_e248h")
+meshes = [NodePath("poop_low"), NodePath("poop2_low")]
+
+[node name="poop2_low" type="MeshInstance3D" parent="." index="1" unique_id=358925812]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0, 0)
+mesh = ExtResource("2_5ye66")

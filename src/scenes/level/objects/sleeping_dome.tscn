@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://cl84ckqtsi0b0"]
+
+[ext_resource type="PackedScene" uid="uid://jjqb57m1ulyu" path="res://src/assets/models/objects/sleep_dome/Sleeping Dome.glb" id="1_ukisi"]
+
+[node name="Sleeping Dome" unique_id=69131057 instance=ExtResource("1_ukisi")]

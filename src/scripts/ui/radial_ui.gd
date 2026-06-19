@@ -106,6 +106,15 @@ func _process(_delta: float) -> void:
 		ignored.emit()
 		close_menu()
 
+func _setup_button(btn: TextureButton, label_node: Label, key: String) -> void:
+	btn.visible = custom_config.has(key)
+	if btn.visible:
+		var cfg = custom_config[key]
+		label_node.text = tr(cfg.get("label", ""))
+		var is_disabled = cfg.get("disabled", false)
+		btn.disabled = is_disabled
+		btn.modulate.a = 0.5 if is_disabled else 1.0
+
 ## Opens the radial menu using a custom configuration dict
 func open_menu(action_log: Array, energy: float, max_energy: float, config: Dictionary, current_action: String = "", center_override: Dictionary = {}) -> void:
 	if is_menu_open:
@@ -131,20 +140,11 @@ func open_menu(action_log: Array, energy: float, max_energy: float, config: Dict
 		if cfg.has("subactions"):
 			subactions_config[cat] = cfg["subactions"]
 	
-	# Configure buttons visibility and labels
-	top_button.visible = custom_config.has("TOP")
-	bottom_button.visible = custom_config.has("BOTTOM")
-	left_button.visible = custom_config.has("LEFT")
-	right_button.visible = custom_config.has("RIGHT")
-	
-	if top_button.visible:
-		top_label.text = tr(custom_config["TOP"].get("label", ""))
-	if bottom_button.visible:
-		bottom_label.text = tr(custom_config["BOTTOM"].get("label", ""))
-	if left_button.visible:
-		left_label.text = tr(custom_config["LEFT"].get("label", ""))
-	if right_button.visible:
-		right_label.text = tr(custom_config["RIGHT"].get("label", ""))
+	# Configure buttons visibility, labels, and disabled states
+	_setup_button(top_button, top_label, "TOP")
+	_setup_button(bottom_button, bottom_label, "BOTTOM")
+	_setup_button(left_button, left_label, "LEFT")
+	_setup_button(right_button, right_label, "RIGHT")
 		
 	_refresh_log()
 	
@@ -215,19 +215,10 @@ func update_realtime_data(action_log: Array, energy: float, max_energy: float, n
 			if cfg.has("subactions"):
 				subactions_config[cat] = cfg["subactions"]
 				
-		top_button.visible = custom_config.has("TOP")
-		bottom_button.visible = custom_config.has("BOTTOM")
-		left_button.visible = custom_config.has("LEFT")
-		right_button.visible = custom_config.has("RIGHT")
-		
-		if top_button.visible:
-			top_label.text = tr(custom_config["TOP"].get("label", ""))
-		if bottom_button.visible:
-			bottom_label.text = tr(custom_config["BOTTOM"].get("label", ""))
-		if left_button.visible:
-			left_label.text = tr(custom_config["LEFT"].get("label", ""))
-		if right_button.visible:
-			right_label.text = tr(custom_config["RIGHT"].get("label", ""))
+		_setup_button(top_button, top_label, "TOP")
+		_setup_button(bottom_button, bottom_label, "BOTTOM")
+		_setup_button(left_button, left_label, "LEFT")
+		_setup_button(right_button, right_label, "RIGHT")
 			
 	_refresh_log()
 
@@ -327,6 +318,9 @@ func _on_primary_hovered(category: String) -> void:
 		return
 		
 	var cfg = custom_config[category]
+	if cfg.get("disabled", false):
+		return
+		
 	var subactions = cfg.get("subactions", [])
 	if subactions.is_empty():
 		# Direct action button, clear any subactions fanned from previous hovers
@@ -346,6 +340,9 @@ func _on_primary_clicked(category: String) -> void:
 		return
 		
 	var cfg = custom_config[category]
+	if cfg.get("disabled", false):
+		return
+		
 	var subactions = cfg.get("subactions", [])
 	if subactions.is_empty():
 		# Direct action selection

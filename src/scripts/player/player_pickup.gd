@@ -136,9 +136,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if held_body:
 			if event.button_index == MOUSE_BUTTON_RIGHT or event.is_action(ACTION_THROW):
 				_throw()
-			elif event.button_index == MOUSE_BUTTON_WHEEL_UP or event.is_action(ACTION_ZOOM_IN):
+			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN or event.is_action(ACTION_ZOOM_IN):
 				_adjust_hold_distance(true)
-			elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN or event.is_action(ACTION_ZOOM_OUT):
+			elif event.button_index == MOUSE_BUTTON_WHEEL_UP or event.is_action(ACTION_ZOOM_OUT):
 				_adjust_hold_distance(false)
 	elif held_body:
 		if event.is_action_pressed(ACTION_THROW):

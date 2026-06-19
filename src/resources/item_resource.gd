@@ -6,6 +6,7 @@ class_name ItemResource
 @export var icon: Texture2D
 @export var stackable: bool = false
 @export var weight: float = 1.0
+@export var visual_scene: PackedScene
 
 ## Optional metadata for specialized items
 @export var metadata: Dictionary = {}

@@ -37,6 +37,8 @@ spot_angle_attenuation = 3.0
 [node name="HoldPosition" type="Marker3D" parent="Camera3D" unique_id=20240517]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
+[node name="HeldItemVisuals" type="Node3D" parent="Camera3D" unique_id=20240519]
+
 [node name="PlayerInteractor" type="Node3D" parent="." unique_id=661214063 node_paths=PackedStringArray("raycast", "proximity_area")]
 script = ExtResource("2_interactor")
 raycast = NodePath("../Camera3D/RayCast3D")

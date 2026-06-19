@@ -2,11 +2,12 @@
 
 [ext_resource type="Texture2D" uid="uid://cyco7s20qfopf" path="res://src/assets/models/level/modular_level_kit_T_Painted_Metal.webp" id="1_73odo"]
 [ext_resource type="Texture2D" uid="uid://dgao1kkashjqv" path="res://src/assets/models/level/modular_level_kit_T_Painted_Metal_Roughness.webp" id="2_gedoo"]
-[ext_resource type="Texture2D" uid="uid://cunfloelhler4" path="res://src/assets/models/level/test.webp" id="3_73odo"]
+[ext_resource type="Texture2D" uid="uid://bmh2shiub4xmu" path="res://src/assets/models/level/level_wall_normal_upscaled.png" id="3_73odo"]
 
 [resource]
 resource_name = "MI_Painted_Metal_Grey"
 cull_mode = 2
+albedo_color = Color(0.91881305, 0.9091144, 0.9165166, 1)
 albedo_texture = ExtResource("1_73odo")
 metallic = 0.2681818
 metallic_texture = ExtResource("2_gedoo")

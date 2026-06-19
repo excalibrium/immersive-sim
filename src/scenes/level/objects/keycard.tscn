@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://n257wkhlqxvy"]
+
+[ext_resource type="PackedScene" uid="uid://susa1sqh3gyt" path="res://src/assets/models/objects/keycard/keycard.glb" id="1_eyrr6"]
+[ext_resource type="Texture2D" uid="uid://dhjbk0mtffogl" path="res://src/assets/models/objects/keycard/keycard.png" id="2_dchhr"]
+[ext_resource type="Material" uid="uid://b3fubnfcb27ci" path="res://src/resources/materials/objective_item_material.tres" id="2_jjjns"]
+[ext_resource type="Texture2D" uid="uid://maf707ayfq4k" path="res://src/assets/models/objects/keycard/keycard_plastic_normal.jpg" id="4_72qet"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjjns"]
+albedo_color = Color(0.7807016, 0.7807017, 0.7807016, 1)
+albedo_texture = ExtResource("2_dchhr")
+metallic = 0.3
+normal_enabled = true
+normal_texture = ExtResource("4_72qet")
+
+[node name="keycard" unique_id=1436839804 instance=ExtResource("1_eyrr6")]
+
+[node name="Cube" parent="." index="0" unique_id=1572631898]
+material_overlay = ExtResource("2_jjjns")
+surface_material_override/0 = SubResource("StandardMaterial3D_jjjns")

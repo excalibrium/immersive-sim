@@ -46,7 +46,7 @@ var action_pool: Dictionary = {
 	"INVESTIGATE":        10.0,
 	"DISPLAY":            10.0,
 	"PLAY":               10.0,
-	"WASTE_BEHAVIOR":     10.0,
+	"WASTE_BEHAVIOR":     20.0,
 	"SLEEP_EARLY":        10.0,
 	"MIRROR_PLAYER":      10.0,
 	"REFUSE_INTERACTION": 10.0,
@@ -87,11 +87,11 @@ func apply_delta(variable: String, delta: float) -> void:
 		"resonance_frequency":
 			resonance_frequency = clamp(resonance_frequency + effective_delta, 0.0, 100.0)
 
-## Adjusts action pool weight for a given action. Floor is 1.0.
+## Adjusts action pool weight for a given action. Floor is 1.0. Max is 50.0.
 func apply_action_weight(action_id: String, delta: float) -> void:
 	if not action_pool.has(action_id):
 		return
-	action_pool[action_id] = max(action_pool[action_id] + delta, 1.0)
+	action_pool[action_id] = clamp(action_pool[action_id] + delta, 1.0, 50.0)
 
 ## Logs an action to the recency buffer. Max 3 entries, most recent first.
 func log_action(action_id: String) -> void:

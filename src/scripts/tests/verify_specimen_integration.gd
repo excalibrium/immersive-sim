@@ -185,6 +185,50 @@ func _ready() -> void:
 	egg_specimen.queue_free()
 	print("[PASS] Custom interaction prompt dynamically displays Current Action")
 
+	# 11b. Verify WASTE_BEHAVIOR State Spawns Poop
+	var poop_test_specimen = specimen_scene.instantiate()
+	add_child(poop_test_specimen)
+	
+	# Hatch so we are in CHILD phase
+	poop_test_specimen.hatch()
+	await get_tree().create_timer(1.2).timeout
+	
+	# Transition to WASTE_BEHAVIOR
+	poop_test_specimen._on_action_performed("WASTE_BEHAVIOR")
+	assert(poop_test_specimen._current_action == "WASTE_BEHAVIOR", "FAIL: Current action should be WASTE_BEHAVIOR")
+	
+	# Manually trigger navigation finished to simulate arriving at the corner
+	var state = poop_test_specimen.state_machine.current_state
+	assert(state is WasteBehaviorState, "FAIL: Current state should be WasteBehaviorState")
+	
+	# Clear out any existing poop in the parent node (if any)
+	var parent_node = poop_test_specimen.get_parent()
+	var objects_root = parent_node.get_node_or_null("Objects") if parent_node else null
+	if objects_root:
+		for child in objects_root.get_children():
+			if "poop" in child.name.to_lower():
+				child.queue_free()
+		# Process one frame to ensure queue_free takes effect
+		await get_tree().process_frame
+	
+	# Now trigger navigation finished
+	state.handle_navigation_finished(poop_test_specimen.get_state_context())
+	
+	# Verify that a poop was spawned
+	var found_poop = false
+	var target_parent = objects_root if objects_root else parent_node
+	if target_parent:
+		for child in target_parent.get_children():
+			if "poop" in child.name.to_lower() and not child.is_queued_for_deletion():
+				found_poop = true
+				assert(child.global_position.is_equal_approx(poop_test_specimen.global_position), "FAIL: Poop global_position should match specimen's global_position")
+				child.queue_free() # clean up
+				break
+				
+	assert(found_poop, "FAIL: Poop object was not spawned after waste behavior finished")
+	poop_test_specimen.queue_free()
+	print("[PASS] WASTE_BEHAVIOR state spawns poop scene on navigation finished")
+
 	# 12. Verify Child Phase Breathing Audio
 	SpecimenBridge.profile.phase = SpecimenProfile.Phase.EGG
 	var breath_specimen = specimen_scene.instantiate()

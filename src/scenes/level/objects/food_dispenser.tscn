@@ -1,0 +1,5 @@
+[gd_scene format=3 uid="uid://d4mkhqte6vore"]
+
+[ext_resource type="PackedScene" uid="uid://bnseh3r6y54ld" path="res://src/assets/models/objects/food_dispenser/Food Dispenser.glb" id="1_tv63y"]
+
+[node name="Food Dispenser" unique_id=482475531 instance=ExtResource("1_tv63y")]

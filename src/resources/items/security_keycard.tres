@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="ItemResource" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ItemResource" format=3 uid="uid://banuvln5vow1j"]
 
-[ext_resource type="Script" path="res://src/resources/item_resource.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://qfwpbd5hj3dv" path="res://src/resources/item_resource.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://c6v2d1n4p1x3g" path="res://src/scenes/player/visuals/KeycardVisual.tscn" id="2_visual"]
 
 [resource]
 script = ExtResource("1_script")
 item_id = "security_keycard"
 display_name_key = "ITEM_SECURITY_KEYCARD"
-stackable = false
 weight = 0.1
-metadata = {}
+visual_scene = ExtResource("2_visual")

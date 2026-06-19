@@ -38,6 +38,10 @@ func start_cycle() -> void:
 		profile.energy = profile.get_max_energy()
 		print("CycleManager: Started Cycle ", profile.current_cycle, " | AP: ", current_ap, " | Energy: ", profile.energy)
 		
+		# Earn 10 credits at the start of each cycle (starting from cycle >= 1)
+		if Game.session and profile.current_cycle > 0:
+			Game.session.credits += 10
+		
 		# Auto-hatch at Cycle 5 if still EGG
 		if profile.current_cycle >= 5 and profile.phase == SpecimenProfile.Phase.EGG:
 			if is_instance_valid(external_specimen):
