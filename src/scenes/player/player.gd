@@ -37,8 +37,11 @@ var continuous_shake_intensity: float = 0.0
 
 # --- NODES ---
 @export var camera_3d : Camera3D
+@export var camera_bob_component : Node
+@export var footstep_audio_component : Node3D
+@onready var camera_pivot : Node3D = $CameraPivot
 @onready var collision_shape : CollisionShape3D = $CollisionShape3D
-@onready var held_item_visuals : Node3D = $Camera3D/HeldItemVisuals
+@onready var held_item_visuals : Node3D = $CameraPivot/Camera3D/HeldItemVisuals
 
 # --- MOVEMENT VARIABLES ---
 var jump_buffer_time: float = 0.1
@@ -56,7 +59,10 @@ func _ready():
 	
 	# Fallback if not assigned in inspector
 	if not camera_3d:
-		camera_3d = get_node_or_null("Camera3D")
+		camera_3d = get_node_or_null("CameraPivot/Camera3D")
+		
+	if camera_bob_component:
+		camera_bob_component.footstep_stepped.connect(_on_footstep_stepped)
 		
 	# Connect to PlayerPickup component if present in subtree
 	var pickup_node = find_child("PlayerPickup")
@@ -82,9 +88,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Mouse look
 	if event is InputEventMouseMotion and WindowManager.is_mouse_captured():
 		rotate_y(-event.relative.x * mouse_sensitivity)
-		if camera_3d:
-			camera_3d.rotate_x(-event.relative.y * mouse_sensitivity)
-			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+		if camera_pivot:
+			camera_pivot.rotate_x(-event.relative.y * mouse_sensitivity)
+			camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 	
 	# Scroll or use held item (only if not carrying a physics object)
 	if WindowManager.is_mouse_captured() and player_pickup and player_pickup.held_body == null:
@@ -154,6 +160,9 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 	
+	if camera_bob_component:
+		camera_bob_component.update_bob(velocity, is_on_floor(), delta)
+	
 	_update_camera_shake(delta)
 
 
@@ -164,9 +173,9 @@ func _handle_joypad_look(delta: float):
 	var look_dir = Input.get_vector("look_left", "look_right", "look_up", "look_down")
 	if look_dir.length() > 0:
 		rotate_y(-look_dir.x * joy_sensitivity)
-		if camera_3d:
-			camera_3d.rotate_x(-look_dir.y * joy_sensitivity)
-			camera_3d.rotation.x = clamp(camera_3d.rotation.x, deg_to_rad(-89), deg_to_rad(89))
+		if camera_pivot:
+			camera_pivot.rotate_x(-look_dir.y * joy_sensitivity)
+			camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 func _update_state(delta: float):
 	if current_state == State.CLIMBING or current_state == State.WALL_RUNNING:
@@ -193,9 +202,9 @@ func _update_state(delta: float):
 		var height_diff = prev_height - collision_shape.shape.height
 		position.y -= height_diff / 2.0
 		
-		if camera_3d:
-			# Keep camera 0.5 units below the top of the capsule
-			camera_3d.position.y = (collision_shape.shape.height / 2.0) - 0.13
+		if camera_pivot:
+			# Keep camera pivot 0.5 units below the top of the capsule
+			camera_pivot.position.y = (collision_shape.shape.height / 2.0) - 0.13
 	
 func _handle_states(delta: float):
 	match current_state:
@@ -393,3 +402,8 @@ func use_held_item() -> void:
 		var use_comp = active_visual.get_node_or_null("ItemUseComponent")
 		if use_comp and use_comp.has_method("trigger_use"):
 			use_comp.trigger_use(self)
+
+func _on_footstep_stepped() -> void:
+	if is_on_floor() and current_state != State.CLIMBING:
+		if footstep_audio_component:
+			footstep_audio_component.play_footstep()

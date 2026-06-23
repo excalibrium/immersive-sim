@@ -17,11 +17,18 @@ const RS = preload("res://src/scripts/conditioning/reinforcement_system.gd")
 @export var radial_ui: InteractionRadial
 @export var specimen_interactable: Interactable
 
+@export_group("Tutorial Settings")
+@export var start_in_tutorial: bool = true
+@export var tutorial_start_pos: Vector3 = Vector3(-32.0, 1.0, -10.2)
+
 var reinforcement_system: ReinforcementSystem = null
 var cycle_manager: CycleManager = null
-var ap_label: Label = null
+var ap_label: Control = null
 var _is_interacting_with_bed: bool = false
 var _current_action_conditioned: bool = false
+var _tutorial_panel: PanelContainer = null
+var _tutorial_label: Label = null
+var _deck_enter_area: Area3D = null
 
 func _enter_tree():
 	# 0. Initialize Game Session early so children can access it in _ready
@@ -156,8 +163,124 @@ func _ready():
 	corp_manager.specimen = specimen
 	add_child(corp_manager)
 	
+	if start_in_tutorial:
+		player.global_position = tutorial_start_pos
+		player.global_rotation = Vector3(0, -PI/2, 0) # Face +X (corridor direction)
+		
+		# Hide core gameplay HUD elements initially
+		if ap_label:
+			ap_label.visible = false
+		var obj_list = $UI.get_node_or_null("ObjectiveList")
+		if obj_list:
+			obj_list.visible = false
+		var inv_ui = $UI.get_node_or_null("InventoryUI")
+		if inv_ui:
+			inv_ui.visible = false
+		if held_item_ui:
+			held_item_ui.visible = false
+			
+		_setup_tutorial()
+	else:
+		if cycle_manager:
+			cycle_manager.start_cycle()
+
+
+func _setup_tutorial() -> void:
+	# 1. Create a tutorial panel dynamically at the bottom center of the HUD
+	_tutorial_panel = PanelContainer.new()
+	_tutorial_panel.name = "TutorialPanel"
+	_tutorial_panel.theme = load("res://src/resources/theme/hud_theme.tres")
+	
+	var margin_container = MarginContainer.new()
+	margin_container.add_theme_constant_override("margin_left", 20)
+	margin_container.add_theme_constant_override("margin_top", 10)
+	margin_container.add_theme_constant_override("margin_right", 20)
+	margin_container.add_theme_constant_override("margin_bottom", 10)
+	_tutorial_panel.add_child(margin_container)
+	
+	_tutorial_label = Label.new()
+	_tutorial_label.name = "TutorialLabel"
+	_tutorial_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_tutorial_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_tutorial_label.add_theme_font_size_override("font_size", 18)
+	margin_container.add_child(_tutorial_label)
+	
+	$UI.add_child(_tutorial_panel)
+	_tutorial_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 80)
+	_tutorial_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_tutorial_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	
+	_tutorial_label.text = "RESEARCH ACCESS TUNNEL\nUse WASD to move, Mouse to look around."
+	
+	# Chain message fade animations using a Tween
+	var tween = create_tween()
+	tween.tween_interval(4.5)
+	tween.tween_property(_tutorial_panel, "modulate:a", 0.0, 1.0)
+	tween.tween_callback(func():
+		if _tutorial_label and _tutorial_panel:
+			_tutorial_label.text = "Proceed to the main observation deck."
+			_tutorial_panel.modulate.a = 0.0
+	)
+	tween.tween_property(_tutorial_panel, "modulate:a", 1.0, 0.5)
+	
+	# 2. Create DeckEnterArea programmatically to detect player entrance
+	_deck_enter_area = Area3D.new()
+	_deck_enter_area.name = "DeckEnterArea"
+	_deck_enter_area.collision_layer = 0
+	_deck_enter_area.collision_mask = 1 # Player layer
+	
+	var col_shape = CollisionShape3D.new()
+	var box_shape = BoxShape3D.new()
+	box_shape.size = Vector3(2.0, 4.0, 6.0) # Width, height, length covering the corridor entrance
+	col_shape.shape = box_shape
+	
+	_deck_enter_area.add_child(col_shape)
+	add_child(_deck_enter_area)
+	
+	# Position at the entrance of the observation room
+	_deck_enter_area.global_position = Vector3(-21.5, 1.0, -10.2)
+	_deck_enter_area.body_entered.connect(_on_deck_entered)
+
+
+func _on_deck_entered(body: Node3D) -> void:
+	if not body is Player:
+		return
+		
+	# Queue free the trigger to prevent re-triggering
+	if _deck_enter_area:
+		_deck_enter_area.queue_free()
+		_deck_enter_area = null
+		
+	# Start cycle manager
 	if cycle_manager:
 		cycle_manager.start_cycle()
+		
+	# Reveal core gameplay HUD elements
+	var held_item_ui = $UI.get_node_or_null("HeldItemUI")
+	if ap_label:
+		ap_label.visible = true
+	var obj_list = $UI.get_node_or_null("ObjectiveList")
+	if obj_list:
+		obj_list.visible = true
+	var inv_ui = $UI.get_node_or_null("InventoryUI")
+	if inv_ui:
+		inv_ui.visible = true
+	if held_item_ui:
+		held_item_ui.visible = true
+		
+	# Show deck connection notification
+	if _tutorial_label and _tutorial_panel:
+		_tutorial_label.text = "OBSERVATION DECK CONNECTED\nCycle 1 Initialized."
+		_tutorial_panel.modulate.a = 1.0
+		var tween = create_tween()
+		tween.tween_interval(4.0)
+		tween.tween_property(_tutorial_panel, "modulate:a", 0.0, 1.0)
+		tween.finished.connect(func():
+			if _tutorial_panel:
+				_tutorial_panel.queue_free()
+				_tutorial_panel = null
+				_tutorial_label = null
+		)
 
 
 

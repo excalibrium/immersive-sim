@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://b1hc4kl6l2jm5" path="res://src/scenes/player/player.gd" id="1_swhsd"]
 [ext_resource type="Script" uid="uid://3xnkdkqmefvu" path="res://src/scripts/player/player_interactor.gd" id="2_interactor"]
 [ext_resource type="Script" uid="uid://cw05tcffh0etf" path="res://src/scripts/player/player_pickup.gd" id="3_pickup"]
+[ext_resource type="Script" uid="uid://cyv8ivedppght" path="res://src/scripts/player/camera_bob_component.gd" id="4_bob"]
+[ext_resource type="Script" uid="uid://d1o0qosn3b341" path="res://src/scripts/player/footstep_audio_component.gd" id="5_footstep"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_yx56f"]
 
@@ -11,9 +13,11 @@ radius = 0.25
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_qopur"]
 
-[node name="Player" type="CharacterBody3D" unique_id=1371803597 node_paths=PackedStringArray("camera_3d") groups=["player"]]
+[node name="Player" type="CharacterBody3D" unique_id=1371803597 node_paths=PackedStringArray("camera_3d", "camera_bob_component", "footstep_audio_component") groups=["player"]]
 script = ExtResource("1_swhsd")
-camera_3d = NodePath("Camera3D")
+camera_3d = NodePath("CameraPivot/Camera3D")
+camera_bob_component = NodePath("CameraBobComponent")
+footstep_audio_component = NodePath("FootstepAudioComponent")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=942305582]
 gi_mode = 2
@@ -22,32 +26,34 @@ mesh = SubResource("CapsuleMesh_yx56f")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=405247634]
 shape = SubResource("CapsuleShape3D_swhsd")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=148639062]
+[node name="CameraPivot" type="Node3D" parent="." unique_id=20260621]
 
-[node name="RayCast3D" type="RayCast3D" parent="Camera3D" unique_id=1269249028]
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=148639062]
+
+[node name="RayCast3D" type="RayCast3D" parent="CameraPivot/Camera3D" unique_id=1269249028]
 target_position = Vector3(0, 0, -3)
 
-[node name="SpotLight3D" type="SpotLight3D" parent="Camera3D" unique_id=643220316]
+[node name="SpotLight3D" type="SpotLight3D" parent="CameraPivot/Camera3D" unique_id=643220316]
 transform = Transform3D(0.9998477, 0, 0.017452406, 0, 1, 0, -0.017452406, 0, 0.9998477, 0.0003637001, 0, 0.03068316)
 spot_range = 25.0
 spot_attenuation = 0.95
 spot_angle = 20.0
 spot_angle_attenuation = 3.0
 
-[node name="HoldPosition" type="Marker3D" parent="Camera3D" unique_id=20240517]
+[node name="HoldPosition" type="Marker3D" parent="CameraPivot/Camera3D" unique_id=20240517]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
 
-[node name="HeldItemVisuals" type="Node3D" parent="Camera3D" unique_id=20240519]
+[node name="HeldItemVisuals" type="Node3D" parent="CameraPivot/Camera3D" unique_id=20240519]
 
 [node name="PlayerInteractor" type="Node3D" parent="." unique_id=661214063 node_paths=PackedStringArray("raycast", "proximity_area")]
 script = ExtResource("2_interactor")
-raycast = NodePath("../Camera3D/RayCast3D")
+raycast = NodePath("../CameraPivot/Camera3D/RayCast3D")
 proximity_area = NodePath("../ProximityArea")
 
 [node name="PlayerPickup" type="Node3D" parent="." unique_id=20240518 node_paths=PackedStringArray("interactor", "camera_3d")]
 script = ExtResource("3_pickup")
 interactor = NodePath("../PlayerInteractor")
-camera_3d = NodePath("../Camera3D")
+camera_3d = NodePath("../CameraPivot/Camera3D")
 break_distance = 4.0
 max_torque = 0.0
 min_hold_distance = 0.5
@@ -58,3 +64,11 @@ collision_layer = 0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ProximityArea" unique_id=2115356404]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 shape = SubResource("BoxShape3D_qopur")
+
+[node name="CameraBobComponent" type="Node" parent="." unique_id=229254511 node_paths=PackedStringArray("target_camera")]
+script = ExtResource("4_bob")
+target_camera = NodePath("../CameraPivot/Camera3D")
+
+[node name="FootstepAudioComponent" type="Node3D" parent="." unique_id=254265242]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.9, 0)
+script = ExtResource("5_footstep")

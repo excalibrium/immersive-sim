@@ -48,7 +48,6 @@
 [ext_resource type="AudioStream" uid="uid://cidxve1jft3tp" path="res://src/assets/audio/sfx/environment/vent.ogg" id="41_qpnb2"]
 [ext_resource type="AudioStream" uid="uid://dsoc0l80b81tt" path="res://src/assets/audio/sfx/environment/wind.ogg" id="43_ntkrj"]
 [ext_resource type="Script" uid="uid://wuhx28e6grli" path="res://src/scripts/systems/environmental_audio.gd" id="45_environmental_audio"]
-[ext_resource type="PackedScene" uid="uid://cudxj2drnxmmb" path="res://src/scenes/level/objects/food_bowl.tscn" id="47_dgvpq"]
 [ext_resource type="PackedScene" uid="uid://ciy4lqk78m84v" path="res://src/scenes/level/objects/cleaning_cabinet.tscn" id="48_i1lgv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lan02"]
@@ -322,22 +321,22 @@ shadow_mesh = SubResource("ArrayMesh_xmaqg")
 [sub_resource type="BoxShape3D" id="BoxShape3D_placeholder"]
 size = Vector3(0.81, 0.538, 0.001)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_2w1ou"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_qlcbl"]
 viewport_path = NodePath("MonitorPanel/SubViewport")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_n4nj0"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_4gqwq"]
 viewport_path = NodePath("MonitorPanel/SubViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0rk15"]
 resource_local_to_scene = true
-albedo_texture = SubResource("ViewportTexture_2w1ou")
+albedo_texture = SubResource("ViewportTexture_qlcbl")
 metallic = 1.0
 metallic_texture = ExtResource("21_s6jqn")
 roughness = 0.3
 roughness_texture = ExtResource("21_s6jqn")
 emission_enabled = true
 emission_energy_multiplier = 4.0
-emission_texture = SubResource("ViewportTexture_n4nj0")
+emission_texture = SubResource("ViewportTexture_4gqwq")
 normal_texture = ExtResource("22_trq4x")
 
 [sub_resource type="QuadMesh" id="QuadMesh_d2ylq"]
@@ -345,23 +344,23 @@ resource_local_to_scene = true
 material = SubResource("StandardMaterial3D_0rk15")
 size = Vector2(0.815, 0.545)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_ip3fp"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_hua4p"]
 viewport_path = NodePath("ControlPanel/TempControlViewport")
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_d2ylq"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_s0qb0"]
 viewport_path = NodePath("ControlPanel/TempControlViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ip3fp"]
 resource_local_to_scene = true
 resource_name = "MI_TempControl_Screen"
 cull_mode = 2
-albedo_texture = SubResource("ViewportTexture_ip3fp")
+albedo_texture = SubResource("ViewportTexture_hua4p")
 metallic = 1.0
 roughness = 0.5527864
 emission_enabled = true
 emission = Color(1, 1, 1, 1)
 emission_operator = 1
-emission_texture = SubResource("ViewportTexture_d2ylq")
+emission_texture = SubResource("ViewportTexture_s0qb0")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_m2wqr"]
 _surfaces = [{
@@ -430,7 +429,7 @@ cell_size = 0.1
 agent_height = 1.0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fdvr3"]
-size = Vector3(33.954506, 0.54211426, 9.2873535)
+size = Vector3(56.40786, 0.54211426, 9.399536)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ga528"]
 points = PackedVector3Array(0, 2.05, 0, 3.7, 2.05, 0, 0, 0, 0, 3.7, 0, 0, 0, 0, -3.2, 3.7, 0, -3.2)
@@ -475,13 +474,13 @@ size = Vector3(0.2, 8.079468, 17.800001)
 size = Vector3(17, 8.079468, 0.2)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mn2i6"]
-size = Vector3(22.553162, 4.9248047, 0.57421875)
+size = Vector3(44.95781, 4.9248047, 0.57421875)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_v8imb"]
 size = Vector3(0.36974335, 4.9248047, 6.6159363)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_gobyi"]
-size = Vector3(14.947594, 4.9248047, 4.412589)
+size = Vector3(37.192223, 4.9248047, 4.412589)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kmle6"]
 size = Vector3(0.7, 3.2, 8.2)
@@ -497,6 +496,9 @@ size = Vector3(4.7000003, 4.9, 0.8065674)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rjtf1"]
 size = Vector3(3.3, 1.5, 0.8065674)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5kh6f"]
+size = Vector3(0.3949709, 8.018921, 1.4)
 
 [node name="World" type="Node3D" unique_id=1866465083 node_paths=PackedStringArray("radial_ui")]
 script = ExtResource("1_world")
@@ -572,7 +574,7 @@ shadow_blur = 0.0
 directional_shadow_pancake_size = 0.0
 
 [node name="Player" parent="." unique_id=646753948 instance=ExtResource("2_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.7486973, 1, 1.2873428)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -32.899998, -0.7, -10)
 
 [node name="Wind2" type="AudioStreamPlayer3D" parent="Player" unique_id=1504272571]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.518, 0)
@@ -639,6 +641,32 @@ shape = SubResource("BoxShape3D_button")
 script = ExtResource("7_interactable")
 
 [node name="ButtonActivator" type="Node" parent="Objects/WallButton2" unique_id=246641594 node_paths=PackedStringArray("interactable")]
+script = ExtResource("13_btn_act")
+interactable = NodePath("../Interactable")
+
+[node name="WallButton3" type="StaticBody3D" parent="Objects" unique_id=196392121]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -16.1, -0.6, -11.461222)
+collision_layer = 5
+collision_mask = 5
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Objects/WallButton3" unique_id=416700959]
+mesh = SubResource("BoxMesh_button")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/WallButton3" unique_id=1889379399]
+shape = SubResource("BoxShape3D_button")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Objects/WallButton3" unique_id=752197392]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.099999905)
+mesh = SubResource("BoxMesh_button")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Objects/WallButton3" unique_id=822423035]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.099999905)
+shape = SubResource("BoxShape3D_button")
+
+[node name="Interactable" type="Node3D" parent="Objects/WallButton3" unique_id=784842530]
+script = ExtResource("7_interactable")
+
+[node name="ButtonActivator" type="Node" parent="Objects/WallButton3" unique_id=907724194 node_paths=PackedStringArray("interactable")]
 script = ExtResource("13_btn_act")
 interactable = NodePath("../Interactable")
 
@@ -725,6 +753,42 @@ open_offset = Vector3(0, 0, 1)
 interactable = NodePath("../../WallButton2/Interactable")
 is_locked = true
 required_item_id = "security_keycard"
+
+[node name="DoorSlideG" type="StaticBody3D" parent="Objects" unique_id=1557419158]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -16.073738, -1.775, -10.119801)
+collision_layer = 5
+collision_mask = 5
+
+[node name="SM_Door_Right2" type="MeshInstance3D" parent="Objects/DoorSlideG" unique_id=1293343592]
+transform = Transform3D(0.009999999, 0, 0, 0, 0.01, 0, 0, 0, 0.009999999, 0, 0, 0)
+mesh = SubResource("ArrayMesh_eu8y7")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/DoorSlideG" unique_id=697725625]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.39999962, 1, 0)
+shape = SubResource("BoxShape3D_sliding_door")
+
+[node name="SlidingDoorComp" type="Node" parent="Objects/DoorSlideG" unique_id=2130536554 node_paths=PackedStringArray("interactable")]
+script = ExtResource("14_slide_door")
+open_offset = Vector3(0, 0, -1)
+interactable = NodePath("../../WallButton3/Interactable")
+
+[node name="DoorSlideG2" type="StaticBody3D" parent="Objects" unique_id=1353963717]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -16.073738, -1.775, -10.119801)
+collision_layer = 5
+collision_mask = 5
+
+[node name="SM_Door_Left2" type="MeshInstance3D" parent="Objects/DoorSlideG2" unique_id=847698681]
+transform = Transform3D(0.009999999, 0, 0, 0, 0.01, 0, 0, 0, 0.009999999, 0, 0, 0)
+mesh = SubResource("ArrayMesh_lan02")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Objects/DoorSlideG2" unique_id=277002799]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.39999962, 1, 0)
+shape = SubResource("BoxShape3D_sliding_door")
+
+[node name="SlidingDoorComp" type="Node" parent="Objects/DoorSlideG2" unique_id=458084658 node_paths=PackedStringArray("interactable")]
+script = ExtResource("14_slide_door")
+open_offset = Vector3(0, 0, 1)
+interactable = NodePath("../../WallButton3/Interactable")
 
 [node name="Keycard" type="StaticBody3D" parent="Objects" unique_id=929427340]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.100291, 0.80453146, -2.4087155)
@@ -1357,7 +1421,7 @@ collision_layer = 5
 collision_mask = 4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1214615907]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.220802, -0.22894287, -0.03942871)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.44748, -0.22894287, -0.09552002)
 shape = SubResource("BoxShape3D_fdvr3")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D" unique_id=1219582246]
@@ -1389,19 +1453,19 @@ shape = SubResource("BoxShape3D_fwuda")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.2393885, 2.4871297, 1.1201129)
 shape = SubResource("BoxShape3D_ogsvw")
 
-[node name="CollisionShape3D12" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=235993793]
+[node name="SideShape" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=235993793]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.04195881, 4.034188, 0.70722246)
 shape = SubResource("BoxShape3D_dgvpq")
 
-[node name="CollisionShape3D19" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1810955631]
+[node name="DoorShape" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1810955631]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4341397, 2.5247273, -0.53896904)
 shape = SubResource("BoxShape3D_ntkrj")
 
-[node name="CollisionShape3D20" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=2018670176]
+[node name="DoorShape2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=2018670176]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.430581, 2.5247273, -3.4489298)
 shape = SubResource("BoxShape3D_ntkrj")
 
-[node name="CollisionShape3D21" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1765633319]
+[node name="DoorUpShape" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1765633319]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.430581, 3.762093, -1.9991493)
 shape = SubResource("BoxShape3D_i0c8o")
 
@@ -1442,15 +1506,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.182509, 4.064461, -10.8927
 shape = SubResource("BoxShape3D_s5gw1")
 
 [node name="CollisionShape3D3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1046235896]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.956154, 2.4871297, -5.0798864)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.158478, 2.4871297, -5.0798864)
 shape = SubResource("BoxShape3D_mn2i6")
 
 [node name="CollisionShape3D4" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=230914623]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.220112, 2.4871297, -2.0590277)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.11173, 2.4871297, -2.0590277)
 shape = SubResource("BoxShape3D_v8imb")
 
 [node name="CollisionShape3D5" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1703445701]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.931187, 2.4871297, 3.13691)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -32.0535, 2.4871297, 3.13691)
 shape = SubResource("BoxShape3D_gobyi")
 
 [node name="CollisionShape3D6" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1665666706]
@@ -1476,6 +1540,26 @@ shape = SubResource("BoxShape3D_rjtf1")
 [node name="CollisionShape3D11" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1361663100]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.807388, 0.79953194, 4.9339004)
 shape = SubResource("BoxShape3D_rjtf1")
+
+[node name="SideShape2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1961630657]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.191383, 4.034188, 0.70722246)
+shape = SubResource("BoxShape3D_5kh6f")
+
+[node name="SideShape3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=48311906]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.191383, 4.034188, -4.34568)
+shape = SubResource("BoxShape3D_5kh6f")
+
+[node name="DoorShape3" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=790220449]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.123802, 2.5247273, -0.53896904)
+shape = SubResource("BoxShape3D_ntkrj")
+
+[node name="DoorShape4" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=1607684272]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.120243, 2.5247273, -3.4489298)
+shape = SubResource("BoxShape3D_ntkrj")
+
+[node name="DoorUpShape2" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D2" unique_id=177741178]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.120243, 3.762093, -1.9991493)
+shape = SubResource("BoxShape3D_i0c8o")
 
 [node name="Audio" type="Node3D" parent="." unique_id=473541786]
 script = ExtResource("45_environmental_audio")
@@ -1526,9 +1610,6 @@ max_db = 0.0
 pitch_scale = 0.51
 autoplay = true
 max_distance = 11.35
-
-[node name="FoodBowl" parent="." unique_id=397278405 instance=ExtResource("47_dgvpq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.971516, -1.815929, -17.009357)
 
 [node name="Cleaning Cabinet" parent="." unique_id=188166616 instance=ExtResource("48_i1lgv")]
 transform = Transform3D(-1, 0, -1.3909066e-08, 0, 1, 0, 1.3909066e-08, 0, -1, 3.581, 0.035, 4.5)

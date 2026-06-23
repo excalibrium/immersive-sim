@@ -143,6 +143,8 @@ material = SubResource("StandardMaterial3D_irurq")
 size = Vector3(20, 1, 30)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ttd8k"]
+cull_mode = 2
+shading_mode = 0
 albedo_color = Color(0.070334375, 0.070334375, 0.070334375, 1)
 proximity_fade_enabled = true
 proximity_fade_distance = 3.66
@@ -1603,7 +1605,7 @@ layers = 3
 mesh = SubResource("BoxMesh_ji6jh")
 
 [node name="ceiling4" type="MeshInstance3D" parent="Walls" parent_id_path=PackedInt32Array(4390667) index="119" unique_id=1732517769]
-transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -45.672302, 2.6555371, -1.7999997)
+transform = Transform3D(3.1391647e-07, 0, 1, 0, 1, 0, -1, 0, 3.1391647e-07, -46, 2.6, -1.8)
 layers = 3
 gi_mode = 2
 mesh = SubResource("QuadMesh_avvgh")

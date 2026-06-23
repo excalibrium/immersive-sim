@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://verify_camera_bob_uid"]
+
+[ext_resource type="Script" path="res://src/scripts/tests/verify_camera_bob.gd" id="1_test"]
+
+[node name="VerifyCameraBob" type="Node"]
+script = ExtResource("1_test")

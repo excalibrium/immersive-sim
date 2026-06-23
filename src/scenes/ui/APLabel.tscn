@@ -1,15 +1,27 @@
-[gd_scene format=3 uid="uid://cvegwgs3pbhrf"]
+[gd_scene load_steps=3 format=3 uid="uid://cvegwgs3pbhrf"]
 
-[ext_resource type="Script" uid="uid://bt7olvq52p5qv" path="res://src/scripts/ui/ap_label.gd" id="1_script"]
+[ext_resource type="Script" path="res://src/scripts/ui/ap_label.gd" id="1_script"]
+[ext_resource type="Theme" uid="uid://cx4hudtheme1" path="res://src/resources/theme/hud_theme.tres" id="2_theme"]
 
-[node name="APLabel" type="Label" unique_id=2066532021]
+[node name="APLabel" type="PanelContainer"]
 offset_left = 47.0
 offset_top = 50.0
-offset_right = 277.0
-offset_bottom = 80.0
-theme_override_colors/font_color = Color(0.9, 0.65, 0.2, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 3
-theme_override_font_sizes/font_size = 16
-text = "CYCLE 0 | AP: 10 / 10"
+offset_right = 230.0
+offset_bottom = 102.0
+theme = ExtResource("2_theme")
 script = ExtResource("1_script")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="Label" type="Label" parent="MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "CYCLE 0 | AP: 10 / 10
+CREDS: 10"
+horizontal_alignment = 1
+vertical_alignment = 1
